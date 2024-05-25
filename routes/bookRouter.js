@@ -33,7 +33,7 @@ bookRouter
         next(err);
       });
   })
-  .post((req, res, next) => {
+  .post(authenticate.verifyAdmin, (req, res, next) => {
     Books.create(req.body)
       .then(
         Inventory.create({
@@ -54,11 +54,11 @@ bookRouter
         next(err);
       });
   })
-  .put((req, res, next) => {
+  .put(authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end("PUT operation not supported on /books");
   })
-  .delete((req, res, next) => {
+  .delete(authenticate.verifyAdmin, (req, res, next) => {
     Books.deleteMany({})
       .then(
         (resp) => {
@@ -101,7 +101,7 @@ bookRouter
     res.statusCode = 403;
     res.end("POST operation not supported on /books/" + req.params.bookId);
   })
-  .put(async (req, res, next) => {
+  .put(authenticate.verifyAdmin, async (req, res, next) => {
     //nhập thêm số lượng sách
     Books.findById(req.params.bookId)
       .then(
@@ -136,7 +136,7 @@ bookRouter
         next(err);
       });
   })
-  .delete((req, res, next) => {
+  .delete(authenticate.verifyAdmin, (req, res, next) => {
     Books.findByIdAndDelete(req.params.bookId)
       .then(
         (resp) => {
@@ -228,7 +228,7 @@ bookRouter
       "PUT operation not supported on /books/" + req.params.bookId + "/comments"
     );
   })
-  .delete((req, res, next) => {
+  .delete(authenticate.verifyAdmin, (req, res, next) => {
     Books.findById(req.params.bookId)
       .then(
         (book) => {
@@ -290,7 +290,7 @@ bookRouter
         req.params.commentId
     );
   })
-  .put((req, res, next) => {
+  .put(authenticate.verifyAdmin, authenticate.verifyUser, (req, res, next) => {
     Books.findById(req.params.bookId)
       .then(
         (book) => {
@@ -324,37 +324,44 @@ bookRouter
       )
       .catch((err) => next(err));
   })
-  .delete((req, res, next) => {
-    Books.findById(req.params.bookId)
-      .then(
-        (book) => {
-          if (book != null && book.comments.id(req.params.commentId) != null) {
-            book.comments.id(req.params.commentId).deleteOne();
-            book.save().then(
-              (book) => {
-                Books.findById(book._id)
-                  .populate("comments.author", "fullname _id")
-                  .then((book) => {
-                    res.statusCode = 200;
-                    res.setHeader("Content-Type", "application/json");
-                    res.json(book);
-                  });
-              },
-              (err) => next(err)
-            );
-          } else if (book == null) {
-            err = new Error("Book " + req.params.bookId + " not found");
-            err.status = 404;
-            return next(err);
-          } else {
-            err = new Error("Comment " + req.params.commentId + " not found");
-            err.status = 404;
-            return next(err);
-          }
-        },
-        (err) => next(err)
-      )
-      .catch((err) => next(err));
-  });
+  .delete(
+    authenticate.verifyAdmin,
+    authenticate.verifyUser,
+    (req, res, next) => {
+      Books.findById(req.params.bookId)
+        .then(
+          (book) => {
+            if (
+              book != null &&
+              book.comments.id(req.params.commentId) != null
+            ) {
+              book.comments.id(req.params.commentId).deleteOne();
+              book.save().then(
+                (book) => {
+                  Books.findById(book._id)
+                    .populate("comments.author", "fullname _id")
+                    .then((book) => {
+                      res.statusCode = 200;
+                      res.setHeader("Content-Type", "application/json");
+                      res.json(book);
+                    });
+                },
+                (err) => next(err)
+              );
+            } else if (book == null) {
+              err = new Error("Book " + req.params.bookId + " not found");
+              err.status = 404;
+              return next(err);
+            } else {
+              err = new Error("Comment " + req.params.commentId + " not found");
+              err.status = 404;
+              return next(err);
+            }
+          },
+          (err) => next(err)
+        )
+        .catch((err) => next(err));
+    }
+  );
 
 module.exports = bookRouter;
