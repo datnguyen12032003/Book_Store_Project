@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Books = require("../models/book");
+const authenticate = require("../loaders/authenticate");
+const Inventory = require("../models/inventory");
 
 const bookRouter = express.Router();
 bookRouter.use(bodyParser.json());
@@ -16,6 +18,7 @@ bookRouter
   })
   .get((req, res, next) => {
     Books.find({})
+      .populate("comments.author", "fullname _id")
       .then(
         (books) => {
           if (books.length == 0) {
@@ -33,6 +36,12 @@ bookRouter
   .post((req, res, next) => {
     Books.create(req.body)
       .then(
+        Inventory.create({
+          book: req.body._id,
+          quantity: req.body.quantity,
+          transaction_type: "Addition",
+          description: "Initial stock",
+        }),
         (book) => {
           console.log("Book Created ", book);
           res.statusCode = 200;
@@ -73,6 +82,7 @@ bookRouter
   })
   .get((req, res, next) => {
     Books.findById(req.params.bookId)
+      .populate("comments.author", "fullname _id")
       .then(
         (book) => {
           if (book == null) {
@@ -91,21 +101,33 @@ bookRouter
     res.statusCode = 403;
     res.end("POST operation not supported on /books/" + req.params.bookId);
   })
-  .put((req, res, next) => {
-    Books.findByIdAndUpdate(
-      req.params.bookId,
-      {
-        $set: req.body,
-      },
-      { new: true }
-    )
+  .put(async (req, res, next) => {
+    //nhập thêm số lượng sách
+    Books.findById(req.params.bookId)
       .then(
-        (book) => {
-          if (book == null) {
-            res.json({ message: "No book found" });
+        async (book) => {
+          if (book != null) {
+            await Inventory.create({
+              book: req.params.bookId,
+              quantity: req.body.quantity,
+              transaction_type: "Addition",
+              description: "Increase stock",
+            });
+            book.quantity += req.body.quantity;
+            book.price = req.body.price;
+            book.description = req.body.description;
+            book.save().then(
+              (book) => {
+                res.statusCode = 200;
+                res.setHeader("Content-Type", "application/json");
+                res.json(book);
+              },
+              (err) => next(err)
+            );
           } else {
-            console.log("Book Updated ", book);
-            res.json(book);
+            err = new Error("Book " + req.params.bookId + " not found");
+            err.status = 404;
+            return next(err);
           }
         },
         (err) => next(err)
@@ -134,7 +156,7 @@ bookRouter
   .route("/:bookId/comments")
   .get((req, res, next) => {
     Books.findById(req.params.bookId)
-      .populate("comments")
+      .populate("comments.author", "fullname _id")
       .then(
         (book) => {
           if (book != null) {
@@ -155,16 +177,39 @@ bookRouter
       )
       .catch((err) => next(err));
   })
-  .post((req, res, next) => {
+  .post(authenticate.verifyUser, (req, res, next) => {
     Books.findById(req.params.bookId).then(
       (book) => {
         if (book != null) {
+          req.body.author = req.user._id; //add the author to the comment
+          for (let i = 0; i < book.comments.length; i++) {
+            if (
+              book.comments[i].author.toString() === req.user._id.toString()
+            ) {
+              //check if the user has already commented
+              res.statusCode = 403;
+              res.setHeader("Content-Type", "application/json");
+              res.json({ message: "You have already commented" });
+              return;
+            }
+          }
           book.comments.push(req.body); //push the comment to the comments array
+
+          let total = 0;
+          for (let i = 0; i < book.comments.length; i++) {
+            total += book.comments[i].rating;
+          }
+          book.total_rating = total / book.comments.length; //calculate the average rating
+
           book.save().then(
             (book) => {
-              res.statusCode = 200;
-              res.setHeader("Content-Type", "application/json");
-              res.json(book);
+              Books.findById(book._id)
+                .populate("comments.author", "fullname _id")
+                .then((book) => {
+                  res.statusCode = 200;
+                  res.setHeader("Content-Type", "application/json");
+                  res.json(book);
+                });
             },
             (err) => next(err)
           );
@@ -215,6 +260,7 @@ bookRouter
   .route("/:bookId/comments/:commentId")
   .get((req, res, next) => {
     Books.findById(req.params.bookId)
+      .populate("comments.author", "fullname _id")
       .then(
         (book) => {
           if (book != null && book.comments.id(req.params.commentId) != null) {
@@ -254,9 +300,13 @@ bookRouter
             }
             book.save().then(
               (book) => {
-                res.statusCode = 200;
-                res.setHeader("Content-Type", "application/json");
-                res.json(book);
+                Books.findById(book._id)
+                  .populate("comments.author", "fullname _id")
+                  .then((book) => {
+                    res.statusCode = 200;
+                    res.setHeader("Content-Type", "application/json");
+                    res.json(book);
+                  });
               },
               (err) => next(err)
             );
@@ -282,9 +332,13 @@ bookRouter
             book.comments.id(req.params.commentId).deleteOne();
             book.save().then(
               (book) => {
-                res.statusCode = 200;
-                res.setHeader("Content-Type", "application/json");
-                res.json(book);
+                Books.findById(book._id)
+                  .populate("comments.author", "fullname _id")
+                  .then((book) => {
+                    res.statusCode = 200;
+                    res.setHeader("Content-Type", "application/json");
+                    res.json(book);
+                  });
               },
               (err) => next(err)
             );
