@@ -18,10 +18,6 @@ const inventorySchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  description: {
-    type: String,
-    required: true,
-  },
 });
 
 const Inventory = mongoose.model("Inventory", inventorySchema);

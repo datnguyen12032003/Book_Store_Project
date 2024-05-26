@@ -40,7 +40,6 @@ bookRouter
           book: req.body._id,
           quantity: req.body.quantity,
           transaction_type: "Addition",
-          description: "Initial stock",
         }),
         (book) => {
           console.log("Book Created ", book);
@@ -101,41 +100,45 @@ bookRouter
     res.statusCode = 403;
     res.end("POST operation not supported on /books/" + req.params.bookId);
   })
-  .put(authenticate.verifyAdmin, async (req, res, next) => {
-    //nhập thêm số lượng sách
-    Books.findById(req.params.bookId)
-      .then(
-        async (book) => {
-          if (book != null) {
-            await Inventory.create({
-              book: req.params.bookId,
-              quantity: req.body.quantity,
-              transaction_type: "Addition",
-              description: "Increase stock",
-            });
-            book.quantity += req.body.quantity;
-            book.price = req.body.price;
-            book.description = req.body.description;
-            book.save().then(
-              (book) => {
-                res.statusCode = 200;
-                res.setHeader("Content-Type", "application/json");
-                res.json(book);
-              },
-              (err) => next(err)
-            );
-          } else {
-            err = new Error("Book " + req.params.bookId + " not found");
-            err.status = 404;
-            return next(err);
-          }
-        },
-        (err) => next(err)
-      )
-      .catch((err) => {
-        next(err);
-      });
-  })
+  .put(
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    async (req, res, next) => {
+      //nhập thêm số lượng sách
+      Books.findById(req.params.bookId)
+        .then(
+          async (book) => {
+            if (book != null) {
+              await Inventory.create({
+                book: req.params.bookId,
+                quantity: req.body.quantity,
+                transaction_type: "Addition",
+                description: "Increase stock",
+              });
+              book.quantity += req.body.quantity;
+              book.price = req.body.price;
+              book.description = req.body.description;
+              book.save().then(
+                (book) => {
+                  res.statusCode = 200;
+                  res.setHeader("Content-Type", "application/json");
+                  res.json(book);
+                },
+                (err) => next(err)
+              );
+            } else {
+              err = new Error("Book " + req.params.bookId + " not found");
+              err.status = 404;
+              return next(err);
+            }
+          },
+          (err) => next(err)
+        )
+        .catch((err) => {
+          next(err);
+        });
+    }
+  )
   .delete(authenticate.verifyAdmin, (req, res, next) => {
     Books.findByIdAndDelete(req.params.bookId)
       .then(
