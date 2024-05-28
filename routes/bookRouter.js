@@ -8,6 +8,108 @@ const Inventory = require("../models/inventory");
 const bookRouter = express.Router();
 bookRouter.use(bodyParser.json());
 
+//list all genre
+bookRouter.route("/allgenre").get((req, res, next) => {
+  //find all genres
+  Books.find({})
+    .distinct("genre")
+    .then(
+      (genres) => {
+        res.json(genres);
+      },
+      (err) => next(err)
+    )
+    .catch((err) => {
+      next(err);
+    });
+});
+bookRouter.route("/genre/:genre").get((req, res, next) => {
+  //find all books by genre
+  Books.find({ genre: req.params.genre })
+    .then(
+      (books) => {
+        if (books.length == 0) {
+          res.json({ message: "No books found" });
+        } else {
+          res.json(books);
+        }
+      },
+      (err) => next(err)
+    )
+    .catch((err) => {
+      next(err);
+    });
+});
+//list all author
+bookRouter.route("/allauthor").get((req, res, next) => {
+  //find all authors
+  Books.find({})
+    .distinct("author")
+    .then(
+      (authors) => {
+        res.json(authors);
+      },
+      (err) => next(err)
+    )
+    .catch((err) => {
+      next(err);
+    });
+});
+//sort book by author
+bookRouter.route("/author/:author").get((req, res, next) => {
+  //find all books by author
+  Books.find({ author: req.params.author })
+    .then(
+      (books) => {
+        if (books.length == 0) {
+          res.json({ message: "No books found" });
+        } else {
+          res.json(books);
+        }
+      },
+      (err) => next(err)
+    )
+    .catch((err) => {
+      next(err);
+    });
+});
+//sort by price
+bookRouter.route("/price/from:min/to:max").get((req, res, next) => {
+  //find all books by price
+  Books.find({ price: { $gte: req.params.min, $lte: req.params.max } }) //gte: greater than or equal, lte: less than or equal
+    .then(
+      (books) => {
+        if (books.length == 0) {
+          res.json({ message: "No books found" });
+        } else {
+          res.json(books);
+        }
+      },
+      (err) => next(err)
+    )
+    .catch((err) => {
+      next(err);
+    });
+});
+//sort by rating from min to 5
+bookRouter.route("/rating/:min").get((req, res, next) => {
+  //find all books by rating
+  Books.find({ total_rating: { $gte: req.params.min, $lte: 5 } }) //gte: greater than or equal, lte: less than or equal
+    .then(
+      (books) => {
+        if (books.length == 0) {
+          res.json({ message: "No books found" });
+        } else {
+          res.json(books);
+        }
+      },
+      (err) => next(err)
+    )
+    .catch((err) => {
+      next(err);
+    });
+});
+
 //All books
 bookRouter
   .route("/")
@@ -33,22 +135,32 @@ bookRouter
         next(err);
       });
   })
-  .post(authenticate.verifyAdmin, (req, res, next) => {
-    Books.create(req.body)
-      .then(
-        Inventory.create({
-          book: req.body._id,
-          quantity: req.body.quantity,
-          transaction_type: "Addition",
-        }),
-        (book) => {
-          console.log("Book Created ", book);
-          res.statusCode = 200;
+  .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    Books.findOne({ title: req.body.title })
+      .then((book) => {
+        if (book) {
+          // If a book with the same title already exists, send an error response
+          res.statusCode = 400;
           res.setHeader("Content-Type", "application/json");
-          res.json(book);
-        },
-        (err) => next(err)
-      )
+          res.json({ error: "A book with the same title already exists." });
+        } else {
+          // If no book with the same title exists, create a new book
+          return Books.create(req.body)
+            .then((book) => {
+              console.log("Book Created ", book);
+              return Inventory.create({
+                book: book._id,
+                quantity: req.body.quantity,
+                transaction_type: "Addition",
+              }).then(() => book); // Return the book after creating the inventory
+            })
+            .then((book) => {
+              res.statusCode = 200;
+              res.setHeader("Content-Type", "application/json");
+              res.json(book);
+            });
+        }
+      })
       .catch((err) => {
         next(err);
       });
@@ -57,19 +169,23 @@ bookRouter
     res.statusCode = 403;
     res.end("PUT operation not supported on /books");
   })
-  .delete(authenticate.verifyAdmin, (req, res, next) => {
-    Books.deleteMany({})
-      .then(
-        (resp) => {
-          console.log("Books removed");
-          res.json({ message: "Deleted successfully!" }); // return the response
-        },
-        (err) => next(err) // pass the error to the error handler
-      )
-      .catch((err) => {
-        next(err); // pass the error to the error handler
-      });
-  });
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      Books.deleteMany({})
+        .then(
+          (resp) => {
+            console.log("Books removed");
+            res.json({ message: "Deleted successfully!" }); // return the response
+          },
+          (err) => next(err) // pass the error to the error handler
+        )
+        .catch((err) => {
+          next(err); // pass the error to the error handler
+        });
+    }
+  );
 
 // Detail of a book
 bookRouter
