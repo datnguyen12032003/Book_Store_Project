@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { trace } = require("../routes");
 const Schema = mongoose.Schema;
 
 const inventorySchema = new Schema({
@@ -17,11 +16,7 @@ const inventorySchema = new Schema({
   },
   transaction_date: {
     type: Date,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
+    default: Date.now,
   },
 });
 
