@@ -80,4 +80,40 @@ router.get("/logout", (req, res) => {
   }
 });
 
+//change password
+router
+  .route("/changePassword")
+  .post(authenticate.verifyUser, (req, res, next) => {
+    User.findOne({
+      _id: req.user._id,
+    })
+      .then((user) => {
+        user.changePassword(
+          req.body.oldPassword,
+          req.body.newPassword,
+          (err) => {
+            res.setHeader("Content-Type", "application/json");
+            if (err) {
+              res.statusCode = 500;
+              if (err.name === "IncorrectPasswordError") {
+                res.json({ err: { message: "Incorrect password" } });
+              } else {
+                res.json({ err: err });
+              }
+            } else {
+              res.statusCode = 200;
+              res.json({
+                success: true,
+                status: "Change password successful!",
+              });
+            }
+          }
+        );
+      })
+      .catch((err) => {
+        res.statusCode = 500;
+        res.setHeader("Content-Type", "application/json");
+        res.json({ err: err });
+      });
+  });
 module.exports = router;
