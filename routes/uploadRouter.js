@@ -1,7 +1,5 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
-const bookImg = require("../models/bookImage");
 const Books = require("../models/book");
 const authenticate = require("../loaders/authenticate");
 const upload = require("../loaders/upload");
