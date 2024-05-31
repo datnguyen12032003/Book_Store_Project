@@ -1,6 +1,22 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const bookImageSchema = new Schema(
+  {
+    book: {
+      type: Schema.Types.ObjectId,
+      ref: "Book",
+    },
+    imageUrl: {
+      type: String,
+      required: true,
+    },
+  }
+  // {
+  //   timestamps: true,
+  // }
+);
+
 var commentSchema = new mongoose.Schema(
   {
     comment: {
@@ -58,11 +74,12 @@ var bookSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    imageurls: [bookImageSchema],
     comments: [commentSchema],
-  },
-  {
-    timestamps: true,
   }
+  // {
+  //   timestamps: true,
+  // }
 );
 
 var Books = mongoose.model("Books", bookSchema);
