@@ -31,10 +31,10 @@ var paymentSchema = new mongoose.Schema(
       type: String,
       default: "Pending", //pending là chưa thanh toán
     },
-  },
-  {
-    timestamps: true,
   }
+  // {
+  //   timestamps: true,
+  // }
 );
 
 var Payment = mongoose.model("Payment", paymentSchema);
