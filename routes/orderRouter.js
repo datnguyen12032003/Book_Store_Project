@@ -11,7 +11,7 @@ var Payment = require("../models/payment");
 var Book = require("../models/book");
 var Inventory = require("../models/inventory");
 var authenticate = require("../loaders/authenticate");
-
+const cors = require("../loaders/cors");
 // router.get("/", function (req, res, next) {
 //   res.render("orderlist", { title: "Danh sách đơn hàng" });
 // });
@@ -31,115 +31,126 @@ var authenticate = require("../loaders/authenticate");
 // });
 
 router
+  .options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+  })
   .route("/create_payment_url")
-  .post(authenticate.verifyUser, async function (req, res, next) {
-    process.env.TZ = "Asia/Ho_Chi_Minh";
+  .post(
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    async function (req, res, next) {
+      process.env.TZ = "Asia/Ho_Chi_Minh";
 
-    let date = new Date();
-    let createDate = moment(date).format("YYYYMMDDHHmmss");
-    console.log(createDate);
+      let date = new Date();
+      let createDate = moment(date).format("YYYYMMDDHHmmss");
+      console.log(createDate);
 
-    let ipAddr =
-      req.headers["x-forwarded-for"] ||
-      req.connection.remoteAddress ||
-      req.socket.remoteAddress ||
-      req.connection.socket.remoteAddress;
+      let ipAddr =
+        req.headers["x-forwarded-for"] ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.connection.socket.remoteAddress;
 
-    let config = require("../configs/config");
+      let config = require("../configs/config");
 
-    let tmnCode = config.vnp_TmnCode;
-    let secretKey = config.vnp_HashSecret;
-    let vnpUrl = config.vnp_Url;
-    let returnUrl = config.vnp_ReturnUrl;
-    let orderId = moment(date).format("DDHHmmss");
-    let amount = req.body.amount;
-    let bankCode = "VNBANK";
+      let tmnCode = config.vnp_TmnCode;
+      let secretKey = config.vnp_HashSecret;
+      let vnpUrl = config.vnp_Url;
+      let returnUrl = config.vnp_ReturnUrl;
+      let orderId = moment(date).format("DDHHmmss");
+      let amount = req.body.amount;
+      let bankCode = "VNBANK";
 
-    let locale = "vn";
-    if (locale === null || locale === "") {
-      locale = "vn";
-    }
-    let currCode = "VND";
-    let vnp_Params = {};
-    vnp_Params["vnp_Version"] = "2.1.0";
-    vnp_Params["vnp_Command"] = "pay";
-    vnp_Params["vnp_TmnCode"] = tmnCode;
-    vnp_Params["vnp_Locale"] = locale;
-    vnp_Params["vnp_CurrCode"] = currCode;
-    vnp_Params["vnp_TxnRef"] = orderId;
-    vnp_Params["vnp_OrderInfo"] = "Thanh toan cho ma GD:" + orderId;
-    vnp_Params["vnp_OrderType"] = "other";
-    vnp_Params["vnp_Amount"] = amount * 100;
-    vnp_Params["vnp_ReturnUrl"] = returnUrl;
-    vnp_Params["vnp_IpAddr"] = ipAddr;
-    vnp_Params["vnp_CreateDate"] = createDate;
-    if (bankCode !== null && bankCode !== "") {
-      vnp_Params["vnp_BankCode"] = bankCode;
-    }
-
-    vnp_Params = sortObject(vnp_Params);
-
-    let querystring = require("qs");
-    let signData = querystring.stringify(vnp_Params, { encode: false });
-    let crypto = require("crypto");
-    let hmac = crypto.createHmac("sha512", secretKey);
-    let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
-    vnp_Params["vnp_SecureHash"] = signed;
-    vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
-
-    let bookId = req.body.bookId;
-    let userId = req.user._id;
-    let quantity = req.body.quantity;
-    let total_price = amount;
-    await Payment.create({
-      orderId: orderId,
-      book: bookId,
-      user: userId,
-      quantity: quantity,
-      total_price: total_price,
-    });
-    res.end(vnpUrl);
-  });
-
-router.get("/vnpay_info", function (req, res, next) {
-  let vnp_TransactionStatus = req.query.vnp_TransactionStatus;
-  let orderId = req.query.vnp_TxnRef;
-
-  Payment.findOne({ orderId: orderId })
-    .then((payment) => {
-      if (payment) {
-        payment.payment_status =
-          vnp_TransactionStatus == "00" ? "Success" : "Fail";
-        return payment.save();
-      } else {
-        throw new Error("Payment not found");
+      let locale = "vn";
+      if (locale === null || locale === "") {
+        locale = "vn";
       }
-    })
-    .then((payment) => {
-      if (payment.payment_status === "Success") {
-        Book.findOne({ _id: payment.book }).then((book) => {
-          book.quantity = book.quantity - payment.quantity;
-          return book.save().then(() => {
-            return Inventory.create({
-              book: payment.book,
-              quantity: payment.quantity,
-              transaction_type: "Sell",
+      let currCode = "VND";
+      let vnp_Params = {};
+      vnp_Params["vnp_Version"] = "2.1.0";
+      vnp_Params["vnp_Command"] = "pay";
+      vnp_Params["vnp_TmnCode"] = tmnCode;
+      vnp_Params["vnp_Locale"] = locale;
+      vnp_Params["vnp_CurrCode"] = currCode;
+      vnp_Params["vnp_TxnRef"] = orderId;
+      vnp_Params["vnp_OrderInfo"] = "Thanh toan cho ma GD:" + orderId;
+      vnp_Params["vnp_OrderType"] = "other";
+      vnp_Params["vnp_Amount"] = amount * 100;
+      vnp_Params["vnp_ReturnUrl"] = returnUrl;
+      vnp_Params["vnp_IpAddr"] = ipAddr;
+      vnp_Params["vnp_CreateDate"] = createDate;
+      if (bankCode !== null && bankCode !== "") {
+        vnp_Params["vnp_BankCode"] = bankCode;
+      }
+
+      vnp_Params = sortObject(vnp_Params);
+
+      let querystring = require("qs");
+      let signData = querystring.stringify(vnp_Params, { encode: false });
+      let crypto = require("crypto");
+      let hmac = crypto.createHmac("sha512", secretKey);
+      let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+      vnp_Params["vnp_SecureHash"] = signed;
+      vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
+
+      let bookId = req.body.bookId;
+      let userId = req.user._id;
+      let quantity = req.body.quantity;
+      let total_price = amount;
+      await Payment.create({
+        orderId: orderId,
+        book: bookId,
+        user: userId,
+        quantity: quantity,
+        total_price: total_price,
+      });
+      res.end(vnpUrl);
+    }
+  );
+
+router
+  .options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+  })
+  .get("/vnpay_info", cors.cors, function (req, res, next) {
+    let vnp_TransactionStatus = req.query.vnp_TransactionStatus;
+    let orderId = req.query.vnp_TxnRef;
+
+    Payment.findOne({ orderId: orderId })
+      .then((payment) => {
+        if (payment) {
+          payment.payment_status =
+            vnp_TransactionStatus == "00" ? "Success" : "Fail";
+          return payment.save();
+        } else {
+          throw new Error("Payment not found");
+        }
+      })
+      .then((payment) => {
+        if (payment.payment_status === "Success") {
+          Book.findOne({ _id: payment.book }).then((book) => {
+            book.quantity = book.quantity - payment.quantity;
+            return book.save().then(() => {
+              return Inventory.create({
+                book: payment.book,
+                quantity: payment.quantity,
+                transaction_type: "Sell",
+              });
             });
           });
-        });
-      }
-    })
-    .then(() => {
-      if (vnp_TransactionStatus == "00") {
-        res.status(200).json({ Message: "Success" });
-      } else {
-        res.status(200).json({ Message: "Failed" });
-      }
-    })
-    .catch((err) => {
-      res.status(500).json({ RspCode: "500", Message: err.message });
-    });
-});
+        }
+      })
+      .then(() => {
+        if (vnp_TransactionStatus == "00") {
+          res.status(200).json({ Message: "Success" });
+        } else {
+          res.status(200).json({ Message: "Failed" });
+        }
+      })
+      .catch((err) => {
+        res.status(500).json({ RspCode: "500", Message: err.message });
+      });
+  });
 
 // router.get("/vnpay_return", function (req, res, next) {
 //   let vnp_Params = req.query;
