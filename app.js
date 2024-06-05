@@ -9,6 +9,8 @@ var usersRouter = require("./routes/usersRouter");
 var bookRouter = require("./routes/bookRouter");
 var orderRouter = require("./routes/orderRouter");
 var uploadRouter = require("./routes/uploadRouter");
+var cartRouter = require("./routes/cartRouter");
+
 var session = require("./loaders/session");
 
 const connect = require("./loaders/mongoose");
@@ -32,6 +34,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/books", bookRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/upload", uploadRouter);
+app.use("/api/cart", cartRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
