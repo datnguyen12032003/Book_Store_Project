@@ -11,10 +11,13 @@ bookRouter.use(bodyParser.json());
 //list all genre
 bookRouter
   .route("/allgenre")
+  //option method is used to check if the server allows the request
   .options(cors.corsWithOptions, (req, res) => {
     res.sendStatus(200);
   })
   .get(cors.cors, (req, res, next) => {
+    //cors.cors is a middleware to check if the request is allowed
+
     //find all genres
     Books.find({})
       .distinct("genre")
@@ -31,6 +34,7 @@ bookRouter
 bookRouter
   .route("/genre/:genre")
   .options(cors.corsWithOptions, (req, res) => {
+    //option method is used to check if the server allows the request
     res.sendStatus(200);
   })
   .get(cors.cors, (req, res, next) => {
