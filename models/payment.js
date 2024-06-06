@@ -3,13 +3,13 @@ const Schema = mongoose.Schema;
 
 var paymentSchema = new mongoose.Schema(
   {
-    orderId: {
+    TxnRef: {
       type: String,
       required: true,
     },
-    book: {
+    order: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Book",
+      ref: "Order",
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,

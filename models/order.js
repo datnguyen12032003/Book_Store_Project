@@ -4,13 +4,13 @@ const Schema = mongoose.Schema;
 var orderDetailSchema = new mongoose.Schema({
   book: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Book",
+    ref: "Books",
   },
-  quantity: {
+  order_quantity: {
     type: Number,
     required: true,
   },
-  price: {
+  order_price: {
     type: Number,
     required: true,
   },
@@ -20,6 +20,10 @@ var orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+  },
+  TxnRef: {
+    type: String,
+    required: true,
   },
   total_price: {
     type: Number,

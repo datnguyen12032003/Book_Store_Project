@@ -7,9 +7,10 @@ var logger = require("morgan");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/usersRouter");
 var bookRouter = require("./routes/bookRouter");
-var orderRouter = require("./routes/orderRouter");
+var paymentRouter = require("./routes/paymentRouter");
 var uploadRouter = require("./routes/uploadRouter");
 var cartRouter = require("./routes/cartRouter");
+var orderRouter = require("./routes/orderRouter");
 
 var session = require("./loaders/session");
 
@@ -32,6 +33,7 @@ app.use(session);
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/books", bookRouter);
+app.use("/api/payment", paymentRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/cart", cartRouter);
