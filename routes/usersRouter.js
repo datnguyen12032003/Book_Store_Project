@@ -9,6 +9,29 @@ const crypto = require("crypto");
 const cors = require("../loaders/cors");
 
 router.use(bodyParser.json());
+//login google
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] }),
+  (req, res) => {
+    if (req.user) {
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.json({ mess: "Login success!" });
+    } else {
+      res.statusCode = 500;
+      res.setHeader("Content-Type", "application/json");
+      res.json({ err: "Login failed!" });
+    }
+  }
+);
+
+router.get("/callback", passport.authenticate("google"), (req, res, next) => {
+  var token = authenticate.getToken({ _id: req.user._id });
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "application/json");
+  res.end(token);
+});
 
 //Sign up
 router
