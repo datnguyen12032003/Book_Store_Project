@@ -11,6 +11,7 @@ var paymentRouter = require("./routes/paymentRouter");
 var uploadRouter = require("./routes/uploadRouter");
 var cartRouter = require("./routes/cartRouter");
 var orderRouter = require("./routes/orderRouter");
+var dashboardRouter = require("./routes/dashboardRouter");
 
 var session = require("./loaders/session");
 
@@ -37,6 +38,7 @@ app.use("/api/payment", paymentRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/cart", cartRouter);
+app.use("/api/dashboard", dashboardRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
