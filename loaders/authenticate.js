@@ -50,3 +50,35 @@ exports.verifyAdmin = (req, res, next) => {
     return next(err);
   }
 };
+
+var googleStrategy = require("passport-google-oauth2").Strategy;
+
+exports.googlePassport = passport.use(
+  new googleStrategy(
+    {
+      clientID: config.web.client_id,
+      clientSecret: config.web.client_secret,
+      callbackURL: config.web.redirect_uris,
+      passReqToCallback: true,
+    },
+    (request, accesstoken, refreshToken, profile, done) => {
+      User.findOne({ googleId: profile.id })
+        .then((user) => {
+          if (user) {
+            return done(null, user);
+          } else {
+            user = new User({ username: profile.displayName });
+            user.googleId = profile.id;
+            user.fullname = profile.displayName;
+            user.email = profile.emails[0].value;
+            user.save().then((user) => {
+              return done(null, user);
+            });
+          }
+        })
+        .catch((err) => {
+          return done(err, false);
+        });
+    }
+  )
+);

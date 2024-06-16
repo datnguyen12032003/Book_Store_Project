@@ -1,10 +1,23 @@
+require("dotenv").config();
+
 module.exports = {
-  secretKey: "12345-67890-09876-54321",
-  url: "mongodb://localhost:27017/bookStore",
-  //vnpay
-  vnp_TmnCode: "87O1J1BN",
-  vnp_HashSecret: "PVNIKJYAEJFSMROEIQOHXOMYKZCSRYGZ",
-  vnp_Url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
-  vnp_Api: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction",
-  vnp_ReturnUrl: "http://localhost:3000/api/payment/vnpay_info",
+  secretKey: process.env.SECRET_KEY,
+  url: process.env.DATABASE_URL,
+  // VNPay
+  vnp_TmnCode: process.env.VNP_TMN_CODE,
+  vnp_HashSecret: process.env.VNP_HASH_SECRET,
+  vnp_Url: process.env.VNP_URL,
+  vnp_Api: process.env.VNP_API,
+  vnp_ReturnUrl: process.env.VNP_RETURN_URL,
+  // Google
+  web: {
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    project_id: process.env.GOOGLE_PROJECT_ID,
+    auth_uri: process.env.GOOGLE_AUTH_URI,
+    token_uri: process.env.GOOGLE_TOKEN_URI,
+    auth_provider_x509_cert_url: process.env.GOOGLE_AUTH_PROVIDER_CERT_URL,
+    client_secret: process.env.GOOGLE_CLIENT_SECRET,
+    redirect_uris: process.env.GOOGLE_REDIRECT_URIS,
+    javascript_origins: [process.env.GOOGLE_JAVASCRIPT_ORIGINS],
+  },
 };
