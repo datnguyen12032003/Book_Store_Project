@@ -119,29 +119,66 @@ dashboardRouter
     }
   );
 //Total quantity of books sold
-dashboardRouter.get(
-  "/total-quantity",
-  cors.cors,
-  authenticate.verifyUser,
-  authenticate.verifyAdmin,
-  (req, res, next) => {
-    Order.aggregate([
-      { $unwind: "$order_details" }, //unwind để giải nén mảng, mỗi phần tử trong mảng sẽ tạo ra một bản ghi mới
-      { $match: { order_status: "Success" } },
-      {
-        $group: {
-          _id: null,
-          total_quantity: { $sum: "$order_details.order_quantity" },
+dashboardRouter
+  .get(
+    "/total-quantity",
+    cors.cors,
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      Order.aggregate([
+        { $unwind: "$order_details" }, //unwind để giải nén mảng, mỗi phần tử trong mảng sẽ tạo ra một bản ghi mới
+        { $match: { order_status: "Success" } },
+        {
+          $group: {
+            _id: null,
+            total_quantity: { $sum: "$order_details.order_quantity" },
+          },
         },
-      },
-    ])
-      .then((result) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(result);
-      })
-      .catch((err) => next(err));
-  }
-);
+      ])
+        .then((result) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(result);
+        })
+        .catch((err) => next(err));
+    }
+  )
+  .get(
+    "/revenue/:month",
+    //Show revenue by month
+    cors.cors,
+    (req, res, next) => {
+      let startOfMonth = new Date(req.params.month);
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      let endOfMonth = new Date(req.params.month);
+      endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+      endOfMonth.setDate(0);
+      endOfMonth.setHours(23, 59, 59, 999);
+
+      Order.aggregate([
+        {
+          $match: {
+            order_date: { $gte: startOfMonth, $lt: endOfMonth },
+            order_status: "Success",
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            revenue_by_month: { $sum: "$total_price" },
+          },
+        },
+      ])
+        .then((result) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(result);
+        })
+        .catch((err) => next(err));
+    }
+  );
 
 module.exports = dashboardRouter;
