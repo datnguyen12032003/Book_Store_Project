@@ -17,7 +17,6 @@ bookRouter
   })
   .get(cors.cors, (req, res, next) => {
     //cors.cors is a middleware to check if the request is allowed
-
     //find all genres
     Books.find({})
       .distinct("genre")
@@ -154,6 +153,7 @@ bookRouter
   .get(cors.cors, (req, res, next) => {
     Books.find({})
       .populate("comments.author", "fullname _id")
+      .populate("imageurls.imageUrl")
       .then(
         (books) => {
           if (books.length == 0) {
@@ -235,6 +235,7 @@ bookRouter
   .get(cors.cors, (req, res, next) => {
     Books.findById(req.params.bookId)
       .populate("comments.author", "fullname _id")
+      .populate("imageurls.imageUrl")
       .then(
         (book) => {
           if (book == null) {
