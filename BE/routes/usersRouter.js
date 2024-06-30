@@ -303,4 +303,51 @@ router.post("/resetpassword", (req, res, next) => {
     });
 });
 
+//edit profile
+router.post("/editProfile", authenticate.verifyUser, (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (user) {
+        if (req.body) {
+          user.fullname = req.body.fullname;
+          user.phone = req.body.phone;
+          user.address = req.body.address;
+        }
+        user
+          .save()
+          .then(() => {
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json({
+              success: true,
+              status: "Edit profile successful!",
+            });
+          })
+          .catch((err) => {
+            res.statusCode = 500;
+            res.setHeader("Content-Type", "application/json");
+            res.json({ err: err });
+          });
+      } else {
+        res.statusCode = 500;
+        res.setHeader("Content-Type", "application/json");
+        res.json({ err: "User not found!" });
+      }
+    })
+    .catch((err) => {
+      res.statusCode = 500;
+      res.setHeader("Content-Type", "application/json");
+      res.json({ err: err });
+    });
+});
+
+//Show profile
+router.get("/profile", authenticate.verifyUser, (req, res, next) => {
+  User.findById(req.user._id).then((user) => {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.json(user);
+  });
+});
+
 module.exports = router;
