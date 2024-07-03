@@ -39,6 +39,8 @@ bookRouter
   .get(cors.cors, (req, res, next) => {
     //find all books by genre
     Books.find({ genre: req.params.genre })
+      .populate("comments.author", "fullname _id")
+      .populate("imageurls.imageUrl")
       .then(
         (books) => {
           if (books.length == 0) {
@@ -83,6 +85,8 @@ bookRouter
   .get(cors.cors, (req, res, next) => {
     //find all books by author
     Books.find({ author: req.params.author })
+      .populate("comments.author", "fullname _id")
+      .populate("imageurls.imageUrl")
       .then(
         (books) => {
           if (books.length == 0) {
@@ -105,7 +109,9 @@ bookRouter
   })
   .get(cors.cors, (req, res, next) => {
     //find all books by price
-    Books.find({ price: { $gte: req.params.min, $lte: req.params.max } }) //gte: greater than or equal, lte: less than or equal
+    Books.find({ price: { $gte: req.params.min, $lte: req.params.max } })
+      .populate("comments.author", "fullname _id")
+      .populate("imageurls.imageUrl") //gte: greater than or equal, lte: less than or equal
       .then(
         (books) => {
           if (books.length == 0) {
@@ -128,7 +134,9 @@ bookRouter
   })
   .get(cors.cors, (req, res, next) => {
     //find all books by rating
-    Books.find({ total_rating: { $gte: req.params.min, $lte: 5 } }) //gte: greater than or equal, lte: less than or equal
+    Books.find({ total_rating: { $gte: req.params.min, $lte: 5 } })
+      .populate("comments.author", "fullname _id")
+      .populate("imageurls.imageUrl") //gte: greater than or equal, lte: less than or equal
       .then(
         (books) => {
           if (books.length == 0) {
