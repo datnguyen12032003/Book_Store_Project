@@ -12,7 +12,7 @@ var uploadRouter = require("./routes/uploadRouter");
 var cartRouter = require("./routes/cartRouter");
 var orderRouter = require("./routes/orderRouter");
 var dashboardRouter = require("./routes/dashboardRouter");
-
+var cors = require("cors");
 var session = require("./loaders/session");
 
 const connect = require("./loaders/mongoose");
@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(session);
-
+app.use(cors({ origin: "http://localhost:3001", credentials: true }));
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/books", bookRouter);
