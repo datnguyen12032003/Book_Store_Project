@@ -20,6 +20,11 @@ const Navbar = ({ onSearch }) => {
           />
         </div>
         <ul className="flex space-x-6 text-lg">
+        <li>
+            <Link to="/dashboard" className="hover:text-blue-300">
+              Dashboard
+            </Link>
+          </li>
           <li>
             <Link to="/" className="hover:text-blue-300">
               Home

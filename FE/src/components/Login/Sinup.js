@@ -82,6 +82,7 @@ function RegisterUser() {
     };
 
     return (
+        <div className='h-[700px]'>
         <>
             <ToastContainer />
             <div className={cx('wrapper')}>
@@ -136,6 +137,7 @@ function RegisterUser() {
                 </div>
             </div>
         </>
+        </div>
     );
 }
 
