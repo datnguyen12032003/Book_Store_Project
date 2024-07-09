@@ -174,4 +174,37 @@ uploadRouter
     }
   );
 
+uploadRouter
+  .route("/:bookId/setDefault/:imgId")
+  .get(
+    cors.cors,
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    async (req, res, next) => {
+      try {
+        const book = await Books.findById(req.params.bookId);
+        if (!book) {
+          let err = new Error(`Book ${req.params.bookId} not found`);
+          err.status = 404;
+          return next(err);
+        }
+
+        const image = book.imageurls.id(req.params.imgId);
+        if (!image) {
+          let err = new Error(`Image ${req.params.imgId} not found`);
+          err.status = 404;
+          return next(err);
+        }
+
+        image.defaultImg = true;
+        image.save();
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        res.json(book.imageurls);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
 module.exports = uploadRouter;
