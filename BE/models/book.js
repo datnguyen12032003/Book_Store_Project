@@ -11,6 +11,10 @@ const bookImageSchema = new Schema(
       type: String,
       required: true,
     },
+    defaultImg: {
+      type: Boolean,
+      default: false,
+    },
   }
   // {
   //   timestamps: true,
