@@ -174,7 +174,7 @@ uploadRouter
     }
   );
 
-uploadRouter
+  uploadRouter
   .route("/:bookId/setDefault/:imgId")
   .get(
     cors.cors,
@@ -189,6 +189,11 @@ uploadRouter
           return next(err);
         }
 
+        // Reset all images to not be default
+        book.imageurls.forEach(image => {
+          image.defaultImg = false;
+        });
+
         const image = book.imageurls.id(req.params.imgId);
         if (!image) {
           let err = new Error(`Image ${req.params.imgId} not found`);
@@ -197,7 +202,8 @@ uploadRouter
         }
 
         image.defaultImg = true;
-        image.save();
+        await book.save();  // Save the entire book object to update the default image
+
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
         res.json(book.imageurls);
