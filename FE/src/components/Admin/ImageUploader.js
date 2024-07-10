@@ -50,25 +50,14 @@ const ImageUploader = ({ bookId, onUploadSuccess }) => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response.data)
       return response.data;
     } catch (error) {
       throw error;
     }
   };
 
-  const deleteImage = async (bookId, imageId) => {
-    try {
-      const token = getToken();
-      const response = await axios.delete(`/upload/${bookId}/${imageId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
+  
 
   return (
     <div className="mt-4">

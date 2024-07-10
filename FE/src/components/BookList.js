@@ -28,10 +28,10 @@ const BookList = ({ searchTerm }) => {
         fetchBooks();
     }, []);
 
-    const filteredBooks = books.filter(book =>
+    const filteredBooks = Array.isArray(books) ? books.filter(book =>
         book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         book.author.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    ) : [];
 
     if (loading) {
         return <div className="text-center py-8 text-xl text-blue-500">Loading...</div>;
@@ -48,7 +48,11 @@ const BookList = ({ searchTerm }) => {
                     <div key={book._id} className="bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl">
                         <Link to={`/book/${book._id}`}>
                             <img
-                                src={book.imageurls.length > 0 ? book.imageurls[0].imageUrl : 'default-image-url.jpg'}
+                                src={
+                                    book.imageurls.length > 0
+                                        ? book.imageurls.find(image => image.defaultImg)?.imageUrl || book.imageurls[0].imageUrl
+                                        : 'default-image-url.jpg'
+                                }
                                 alt={book.title}
                                 className="w-full h-64 object-cover"
                             />
