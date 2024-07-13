@@ -11,7 +11,7 @@ const ResetPassword = () => {
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/api/users/forgotpassword', { email });
+            const response = await axios.post('http://localhost:3000/api/users/forgotpassword', { email });
             alert('OTP đã được gửi đến email của bạn');
             setStep(2);
         } catch (error) {
@@ -23,7 +23,7 @@ const ResetPassword = () => {
     const handleResetSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/api/users/resetpassword', {
+            const response = await axios.post('http://localhost:3000/api/users/resetpassword', {
                 email,
                 otp,
                 newPassword,

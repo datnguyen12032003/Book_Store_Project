@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getToken } from '../Login/app/static';
+import { getToken, getGoogleToken } from '../Login/app/static';
+import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
     const [user, setUser] = useState(null);
@@ -10,15 +11,17 @@ const ProfilePage = () => {
         phone: '',
         address: '',
     });
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/users/profile', {
+                const token = getToken() || getGoogleToken(); // Lấy token từ localStorage hoặc cookie của Google
+                const response = await fetch('http://localhost:3000/api/users/profile', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${getToken()}`,
+                        Authorization: `Bearer ${token}`,
                     },
                 });
                 if (!response.ok) {
@@ -50,11 +53,12 @@ const ProfilePage = () => {
 
     const handleSaveProfile = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/users/editProfile', {
+            const token = getToken() || getGoogleToken(); // Lấy token từ localStorage hoặc cookie của Google
+            const response = await fetch('http://localhost:3000/api/users/editProfile', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${getToken()}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     fullname: formData.fullname,
@@ -67,7 +71,6 @@ const ProfilePage = () => {
             }
             setIsEditing(false);
             window.location.reload();
-            // Optionally, fetch updated profile data again and update state
         } catch (error) {
             console.error('Error updating user profile:', error);
             setError('Failed to update user profile. Please try again.');
@@ -79,6 +82,10 @@ const ProfilePage = () => {
             ...formData,
             [e.target.name]: e.target.value,
         });
+    };
+
+    const handleChangePassword = () => {
+        navigate('/change-password');
     };
 
     return (
@@ -171,6 +178,12 @@ const ProfilePage = () => {
                                 }}
                             >
                                 Back to Home
+                            </button>
+                            <button
+                                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                onClick={handleChangePassword}
+                            >
+                                Change Password
                             </button>
                         </div>
                     </div>

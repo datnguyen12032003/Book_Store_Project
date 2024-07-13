@@ -27,10 +27,13 @@ router.get(
 );
 
 router.get("/callback", passport.authenticate("google"), (req, res, next) => {
-  var token = authenticate.getToken({ _id: req.user._id });
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "application/json");
-  res.end(token);
+  console.log(req.user);
+  var token = authenticate.getToken({
+    _id: req.user._id,
+    email: req.user.email,
+  });
+  res.cookie("Token", token, { maxAge: 7200000, path: "/" });
+  res.redirect("http://localhost:3001/contact");
 });
 
 //Sign up
