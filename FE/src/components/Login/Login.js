@@ -29,6 +29,7 @@ function LoginUser() {
                     console.log('user info:', res.data);
                     console.log('Token: ' + res.data);
                     navigate('/contact');
+                    window.location.reload();
                 } else {
                     throw new Error('Token not found in response.');
                 }
@@ -105,7 +106,7 @@ function LoginUser() {
                         <div className="flex justify-center mt-4">
                             <button
                                 className="flex items-center px-4 py-2 border rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
-                                onClick={() => window.open('http://localhost:5000/api/users/google', '_self')}
+                                onClick={() => window.open('http://localhost:3000/api/users/google', '_self')}
                             >
                                 <img
                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb3JJON85iCMGiuY2-fwef-kegI10la8ClXg&s"

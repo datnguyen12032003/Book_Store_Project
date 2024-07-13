@@ -18,6 +18,7 @@ import SignUp from './components/Login/Sinup';
 import ResetPassword from './components/Login/ForgotPassword';
 import ProfilePage from './components/Users/profile';
 import BookDetailUser from './components/BookDetailUser';
+import ChangePassword from './components/Users/ChangePassword';
 
 const App = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -30,7 +31,7 @@ const App = () => {
         <Router>
             <Navbar onSearch={handleSearch} />
             <Routes>
-              {/* Thang */}
+                {/* Thang */}
                 <Route path="/" element={<BookList searchTerm={searchTerm} />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
@@ -42,11 +43,12 @@ const App = () => {
                 <Route path="/edit/:id" element={<EditBook />} />
                 <Route path="/books/:id/upload/many" element={<UploadMultipleImages />} />
                 <Route path="/book/:id" element={<BookDetailUser />} />
-              {/* Viet */}
+                {/* Viet */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/resetpassword" element={<ResetPassword />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/change-password" element={<ChangePassword />} />
             </Routes>
             <Footer />
         </Router>
