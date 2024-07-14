@@ -8,6 +8,31 @@ const cors = require("../loaders/cors");
 const bookRouter = express.Router();
 bookRouter.use(bodyParser.json());
 
+bookRouter
+  .options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+  })
+  .get("/search", cors.cors, async (req, res, next) => {
+    try {
+      const { title } = req.query;
+
+      if (!title) {
+        return res
+          .status(400)
+          .json({ message: "Title query parameter is required" });
+      }
+
+      // Perform the search
+      const books = await Books.find({
+        title: { $regex: title, $options: "i" },
+      });
+
+      res.status(200).json(books);
+    } catch (err) {
+      next(err);
+    }
+  });
+
 //list all genre
 bookRouter
   .route("/allgenre")
