@@ -4,7 +4,7 @@ import { getGoogleToken, getToken } from '../components/Login/app/static'; // Ad
 import { GoTrash } from 'react-icons/go';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 
-export default function CartItem({ item }) {
+export default function CartItem({ item, updateCart, removeFromCart }) {
     const [quantity, setQuantity] = useState(item.quantity);
     const [totalPrice, setTotalPrice] = useState(item.total_price);
 
@@ -35,12 +35,13 @@ export default function CartItem({ item }) {
             }
             setQuantity(response.data.quantity);
             setTotalPrice(response.data.total_price);
+            updateCart(item._id, response.data.quantity, response.data.total_price);
         } catch (err) {
             console.error('Error updating quantity:', err.message);
         }
     };
 
-    const removeFromCart = async () => {
+    const handleRemoveFromCart = async () => {
         try {
             const token = getToken();
             await axios.delete(`/cart/${item._id}/product/${item.book._id}`, {
@@ -48,27 +49,11 @@ export default function CartItem({ item }) {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            // Refresh the cart or remove this item from the UI
+            removeFromCart(item._id);
         } catch (err) {
             console.error('Error removing from cart:', err.message);
         }
     };
-
-    const refreshPage = () => {
-        window.location.reload();
-    };
-
-    const formatPrice = (price) => {
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    };
-
-    // const increaseQuantity = () => {
-    //     setQuantity((prevQuantity) => prevQuantity + 1);
-    // };
-
-    // const decreaseQuantity = () => {
-    //     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
-    // };
 
     return (
         <div className="container grid grid-cols-12 gap-4 mt-6 p-4 h-30 shadow-2xl rounded-lg">
@@ -84,19 +69,22 @@ export default function CartItem({ item }) {
                     {item.book.title}
                 </div>
             </div>
-            <div className="price col-span-2 flex items-center justify-center">{formatPrice(item.price)}đ</div>
+            <div className="price col-span-2 flex items-center justify-center">${item.price}</div>
             <div className="amount col-span-2 flex items-center justify-center">
                 <button onClick={() => updateQuantity('decrease')} className="mr-2 text-gray-500">
-                    <FaMinus onClick={refreshPage} />
+                    <FaMinus />
                 </button>
                 {quantity}
                 <button onClick={() => updateQuantity('increase')} className="ml-2 text-gray-500">
-                    <FaPlus onClick={refreshPage} />
+                    <FaPlus />
                 </button>
             </div>
-            <div className="totalPrice col-span-2 flex items-center justify-center">{formatPrice(totalPrice)}đ</div>
-            <div className="remove col-span-1 flex items-center justify-center" onClick={refreshPage}>
-                <GoTrash className="text-red-500 cursor-pointer" onClick={removeFromCart} />
+            <div className="totalPrice col-span-2 flex items-center justify-center">${totalPrice}</div>
+            <div className="remove col-span-1 flex items-center justify-center">
+                <GoTrash
+                    className="text-red-500 cursor-pointer"
+                    onClick={handleRemoveFromCart}
+                />
             </div>
         </div>
     );
