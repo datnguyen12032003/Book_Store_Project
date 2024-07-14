@@ -3,7 +3,11 @@ const cors = require("cors");
 const app = express();
 
 //whitelist: danh sach cac domain co the truy cap server
-const whitelist = ["http://localhost:3001", "https://localhost:3443"];
+const whitelist = [
+  "http://localhost:3001",
+  "https://localhost:3443",
+  "http://localhost:3000",
+];
 //corsOptionsDelegate: ham kiem tra xem origin co trong whitelist khong
 var corsOptionsDelegate = (req, callback) => {
   var corsOptions;

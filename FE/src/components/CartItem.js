@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
 import axios from '../axiosConfig';
+<<<<<<< HEAD
+import { getToken } from '../components/Login/app/static'; // Adjust the import path as necessary
+=======
 import { getGoogleToken, getToken } from '../components/Login/app/static'; // Adjust the import path as necessary
+>>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
 import { GoTrash } from 'react-icons/go';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 
 export default function CartItem({ item, updateCart, removeFromCart }) {
     const [quantity, setQuantity] = useState(item.quantity);
     const [totalPrice, setTotalPrice] = useState(item.total_price);
+<<<<<<< HEAD
+// ne
+    const updateQuantity = async (action) => {
+        try {
+            const token = getToken();
+=======
 
     const updateQuantity = async (action) => {
         try {
             const token = getToken() || getGoogleToken();
+>>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
             let response;
             if (action === 'increase') {
                 response = await axios.put(
