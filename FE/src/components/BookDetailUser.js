@@ -18,8 +18,8 @@ const BookDetail = () => {
                 const token = getToken();
                 const response = await axios.get(`/books/${id}`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
                 setBook(response.data);
                 setSelectedImage(response.data.imageurls[0]); // Set the first image as default
@@ -34,6 +34,7 @@ const BookDetail = () => {
         fetchBook();
     }, [id]);
 
+<<<<<<< HEAD
     const addToCart = async () => {
         try {
             const token = getToken();
@@ -43,20 +44,43 @@ const BookDetail = () => {
                     bookId: book._id,
                     quantity: quantity,
                     totalPrice: totalPrice,
+=======
+    const addToCart = async (book) => {
+        if (book.quantity === 0) {
+            alert('Hết hàng');
+            return;
+        }
+        try {
+            const token = getToken();
+            const response = await axios.post(
+                '/cart',
+                {
+                    book: book._id,
+                    price: book.price,
+                    quantity: 1, // or any desired initial quantity
+>>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
                 },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
+<<<<<<< HEAD
                 }
             );
             // Handle success or navigate to cart
             console.log('Added to cart:', response.data);
+=======
+                },
+            );
+            console.log('Added to cart:', response.data);
+            alert('Đã thêm vào giỏ hàng');
+>>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
         } catch (err) {
             console.error('Error adding to cart:', err.message);
         }
     };
 
+<<<<<<< HEAD
     const updateQuantity = async (action) => {
         try {
             const token = getToken();
@@ -91,6 +115,8 @@ const BookDetail = () => {
         }
     };
 
+=======
+>>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
     if (loading) {
         return <div className="text-center py-8 text-xl text-blue-500">Loading...</div>;
     }
@@ -99,8 +125,13 @@ const BookDetail = () => {
         return <div className="text-center py-8 text-xl text-red-600">Error: {error}</div>;
     }
 
+    const formatPrice = (price) => {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
+<<<<<<< HEAD
             <div className="bg-white shadow-lg rounded-lg overflow-hidden flex">
                 <div className="w-2/5 p-4">
                     <div className="mb-4 flex justify-center items-center">
@@ -121,9 +152,22 @@ const BookDetail = () => {
                             </div>
                         ))}
                     </div>
+=======
+            <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+                <div className="grid grid-cols-3 gap-4">
+                    {book.imageurls.map((image, index) => (
+                        <img
+                            key={index}
+                            src={image.imageUrl}
+                            alt={`Image ${index}`}
+                            className="w-full h-64 object-cover rounded-lg shadow-md"
+                        />
+                    ))}
+>>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
                 </div>
                 <div className="w-1/2 p-4 mt-[50px] ml-[200px]">
                     <div className="mb-4">
+<<<<<<< HEAD
                         <h2 className="text-3xl font-semibold mb-2 text-gray-800">{book.title}</h2>
                         <p className="text-gray-700 mb-4">{book.description}</p>
                         <div className="mb-4">
@@ -154,6 +198,25 @@ const BookDetail = () => {
                         </button>
                         <button className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-6 py-2 hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             Buy Now
+=======
+                        <p className="text-gray-900 font-medium">
+                            Author: <span className="text-gray-600">{book.author}</span>
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                            Genre: <span className="text-gray-600">{book.genre}</span>
+                        </p>
+                    </div>
+                    <div className="flex items-center justify-between mb-4">
+                        <p className="text-gray-900 font-medium text-lg">{formatPrice(book.price)}đ</p>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                addToCart(book);
+                            }}
+                            className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-6 py-2 rounded-full hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        >
+                            Thêm vào giỏ hàng
+>>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
                         </button>
                     </div>
                 </div>
