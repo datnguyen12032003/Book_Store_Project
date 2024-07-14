@@ -142,6 +142,11 @@ paymentRouter
               quantity: i.order_quantity,
               transaction_type: "Sell",
             });
+
+            // Update the quantity of the book
+            await Book.findByIdAndUpdate(i.book, {
+              $inc: { quantity: -i.order_quantity },
+            });
           } catch (err) {
             next(err);
           }
