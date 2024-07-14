@@ -19,7 +19,8 @@ import ResetPassword from './components/Login/ForgotPassword';
 import ProfilePage from './components/Users/profile';
 import BookDetailUser from './components/BookDetailUser';
 import ChangePassword from './components/Users/ChangePassword';
-
+import PrivateRoute from './components/PrivateRouter';
+import NotFound from './components/PageNotFound';
 const App = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -35,7 +36,8 @@ const App = () => {
                 <Route path="/" element={<BookList searchTerm={searchTerm} />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/dashboard" element={<AdminDashboard />} />
+                {/* //<Route path="/dashboard" element={<AdminDashboard />} /> */}
+                <Route path="/dashboard" element={<PrivateRoute element={<AdminDashboard />} adminOnly />} />
                 <Route exact path="/booklistadmin" element={<BookListAdmin />} />
                 <Route path="/addbook" element={<AddBook />} />
                 <Route path="/revenue" element={<Revenue />} />
@@ -49,6 +51,8 @@ const App = () => {
                 <Route path="/resetpassword" element={<ResetPassword />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/change-password" element={<ChangePassword />} />
+                <Route path="/not-found" element={<NotFound />} />
+                <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
         </Router>

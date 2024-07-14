@@ -49,6 +49,7 @@ const Navbar = ({ onSearch }) => {
                 .then((response) => {
                     console.log('User Data:', response.data);
                     setUser(response.data);
+                    setUserInfo(response.data);
                     setIsLoggedIn(true);
                 })
                 .catch((error) => {
@@ -81,43 +82,60 @@ const Navbar = ({ onSearch }) => {
                     />
                 </div>
                 <ul className="flex space-x-6 text-lg">
-                    <li>
-                        <Link to="/dashboard" className="hover:text-blue-300">
-                            Dashboard
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/" className="hover:text-blue-300">
-                            Home
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/about" className="hover:text-blue-300">
-                            About
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/contact" className="hover:text-blue-300">
-                            Contact
-                        </Link>
-                    </li>
-                    {isLoggedIn || dataUser.email ? (
+                    {isLoggedIn && (dataUser.admin || user?.admin) ? (
                         <>
-                            <Link to="/profile" className="hover:text-blue-300">
-                                Xin chào, {(user && user.username) || dataUser.email}
-                            </Link>
                             <li>
-                                <button onClick={handleLogout} className="hover:text-blue-300">
-                                    Logout
-                                </button>
+                                <Link to="/dashboard" className="hover:text-blue-300">
+                                    Dashboard
+                                </Link>
                             </li>
+                            <>
+                                <Link to="/profile" className="hover:text-blue-300">
+                                    Xin chào, {(user && user.username) || dataUser.email}
+                                </Link>
+                                <li>
+                                    <button onClick={handleLogout} className="hover:text-blue-300">
+                                        Logout
+                                    </button>
+                                </li>
+                            </>
                         </>
                     ) : (
-                        <li>
-                            <Link to="/login" className="hover:text-blue-300">
-                                Login
-                            </Link>
-                        </li>
+                        <>
+                            <li>
+                                <Link to="/" className="hover:text-blue-300">
+                                    Home
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/about" className="hover:text-blue-300">
+                                    About
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/contact" className="hover:text-blue-300">
+                                    Contact
+                                </Link>
+                            </li>
+                            {isLoggedIn ? (
+                                <>
+                                    <Link to="/profile" className="hover:text-blue-300">
+                                        Xin chào, {(user && user.username) || dataUser.email}
+                                    </Link>
+                                    <li>
+                                        <button onClick={handleLogout} className="hover:text-blue-300">
+                                            Logout
+                                        </button>
+                                    </li>
+                                </>
+                            ) : (
+                                <li>
+                                    <Link to="/login" className="hover:text-blue-300">
+                                        Login
+                                    </Link>
+                                </li>
+                            )}
+                        </>
                     )}
                 </ul>
             </div>
