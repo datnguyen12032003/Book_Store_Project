@@ -3,12 +3,14 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { getToken, removeToken, removeTokenFromCookie, getGoogleToken } from './Login/app/static';
 import { jwtDecode } from 'jwt-decode';
+import { AiOutlineShoppingCart } from 'react-icons/ai';
 
 const Navbar = ({ onSearch }) => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [dataUser, setDataUser] = useState({});
+    const [totalBook, setTotalBook] = useState([]);
 
     useEffect(() => {
         const token = getToken() || getGoogleToken();
@@ -48,6 +50,31 @@ const Navbar = ({ onSearch }) => {
                 setIsLoggedIn(false);
             });
     };
+
+    useEffect(() => {
+        const token = getToken() || getGoogleToken();
+        // Fetch user profile data when component mounts
+        axios
+            .get(
+                'http://localhost:3000/api/cart',
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+                {
+                    withCredentials: true, // Ensure credentials are sent
+                },
+            )
+            .then((response) => {
+                setTotalBook(response.data);
+                console.log(totalBook.length)
+            })
+            .catch((error) => {
+                console.error('Error fetching user profile:', error);
+            });
+    }, []);
+
 
     const handleLogout = () => {
         removeToken();
@@ -160,6 +187,14 @@ const Navbar = ({ onSearch }) => {
                                                 </Link>
                                             </li>
                                         </ul>
+                                    </li>
+                                    <li>
+                                        <Link to="/cart" className="hover:text-blue-300 relative flex items-center">
+                                            <AiOutlineShoppingCart className="w-6 h-6" />
+                                            <span className="bookQuantity absolute top-0 right-0 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                                                {totalBook.length}
+                                            </span>
+                                        </Link>
                                     </li>
                                     <li>
                                         <button onClick={handleLogout} className="hover:text-blue-300">
