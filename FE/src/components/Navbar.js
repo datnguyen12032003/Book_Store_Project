@@ -1,14 +1,7 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-    getToken,
-    setToken,
-    setUserInfo,
-    removeToken,
-    removeTokenFromCookie,
-    getGoogleToken,
-} from './Login/app/static';
+import { getToken, removeToken, removeTokenFromCookie, getGoogleToken } from './Login/app/static';
 import { jwtDecode } from 'jwt-decode';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 
@@ -20,7 +13,7 @@ const Navbar = ({ onSearch }) => {
     const [totalBook, setTotalBook] = useState([]);
 
     useEffect(() => {
-        const token = getToken() || getGoogleToken(); // Lấy token từ localStorage hoặc cookie của Google
+        const token = getToken() || getGoogleToken();
         if (token) {
             try {
                 const decoded = jwtDecode(token);
@@ -35,32 +28,27 @@ const Navbar = ({ onSearch }) => {
         }
     }, []);
 
-    useLayoutEffect(() => {
-        fetchUserData();
-    }, []);
+    useEffect(() => {
+        if (isLoggedIn) {
+            fetchUserData();
+        }
+    }, [isLoggedIn]);
 
     const fetchUserData = () => {
-        if (getToken() || getGoogleToken()) {
-            const token = getToken() || getGoogleToken(); // Lấy token từ localStorage hoặc cookie của Google
-            axios
-                .get('http://localhost:3000/api/users/profile', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                .then((response) => {
-                    console.log('User Data:', response.data);
-                    setUser(response.data);
-                    setUserInfo(response.data);
-                    setIsLoggedIn(true);
-                })
-                .catch((error) => {
-                    console.error('Error fetching user data:', error);
-                    setIsLoggedIn(false);
-                });
-        } else {
-            setIsLoggedIn(false);
-        }
+        const token = getToken() || getGoogleToken();
+        axios
+            .get('http://localhost:3000/api/users/profile', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then((response) => {
+                setUser(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching user data:', error);
+                setIsLoggedIn(false);
+            });
     };
 
     useEffect(() => {
@@ -94,6 +82,15 @@ const Navbar = ({ onSearch }) => {
         navigate('/login', { replace: true });
         window.location.reload();
     };
+
+    const handleProfileClick = () => {
+        navigate('/profile');
+    };
+
+    const handleHistoryClick = () => {
+        navigate('/history');
+    };
+
     return (
         <nav className="bg-orange-500 text-white shadow-md">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -116,16 +113,36 @@ const Navbar = ({ onSearch }) => {
                                     Dashboard
                                 </Link>
                             </li>
-                            <>
-                                <Link to="/profile" className="hover:text-blue-300">
+                            <li className="relative group">
+                                <button className="hover:text-blue-300 focus:outline-none">
                                     Xin chào, {(user && user.username) || dataUser.email}
-                                </Link>
-                                <li>
-                                    <button onClick={handleLogout} className="hover:text-blue-300">
-                                        Logout
-                                    </button>
-                                </li>
-                            </>
+                                </button>
+                                <ul className="absolute hidden group-hover:block right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+                                    <li>
+                                        <Link
+                                            to="/profile"
+                                            onClick={handleProfileClick}
+                                            className="block px-4 py-2 text-gray-800 hover:bg-blue-300"
+                                        >
+                                            Profile
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            to="/history"
+                                            onClick={handleHistoryClick}
+                                            className="block px-4 py-2 text-gray-800 hover:bg-blue-300"
+                                        >
+                                            History Payment
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <button onClick={handleLogout} className="hover:text-blue-300">
+                                    Logout
+                                </button>
+                            </li>
                         </>
                     ) : (
                         <>
@@ -146,9 +163,31 @@ const Navbar = ({ onSearch }) => {
                             </li>
                             {isLoggedIn ? (
                                 <>
-                                    <Link to="/profile" className="hover:text-blue-300">
-                                        Xin chào, {(user && user.username) || dataUser.email}
-                                    </Link>
+                                    <li className="relative group">
+                                        <button className="hover:text-blue-300 focus:outline-none">
+                                            Xin chào, {(user && user.username) || dataUser.email}
+                                        </button>
+                                        <ul className="absolute hidden group-hover:block right-0 mt-0 w-48 bg-white rounded-md shadow-lg py-1">
+                                            <li>
+                                                <Link
+                                                    to="/profile"
+                                                    onClick={handleProfileClick}
+                                                    className="block px-4 py-2 text-gray-800 hover:bg-blue-300"
+                                                >
+                                                    Profile
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    to="/history"
+                                                    onClick={handleHistoryClick}
+                                                    className="block px-4 py-2 text-gray-800 hover:bg-blue-300"
+                                                >
+                                                    History Payment
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </li>
                                     <li>
                                         <Link to="/cart" className="hover:text-blue-300 relative flex items-center">
                                             <AiOutlineShoppingCart className="w-6 h-6" />
