@@ -152,7 +152,7 @@ paymentRouter
           }
         }
 
-        res.status(200).json({ Message: "Success" });
+        res.status(200).redirect("http://localhost:3001/payment/success");
       }
     } catch (err) {
       next(err);
@@ -194,8 +194,9 @@ paymentRouter
             { $inc: { quantity: detail.order_quantity } }
           );
         }
-
-        res.status(200).json({ Message: "Cancel" });
+console.log(order);
+        res.status(200).redirect("http://localhost:3001/payment/cancel");
+       
       }
     } catch (err) {
       next(err);

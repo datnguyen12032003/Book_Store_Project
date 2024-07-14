@@ -26,6 +26,8 @@ import Cart from './components/Cart';
 import Payment from './components/Payment';
 
 import HistoryPayment from './components/Users/HistoryPayment';
+import PaymentSuccess from './components/PaymentSuccessful';
+import PaymentFail from './components/PaymentFail';
 
 const App = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -63,6 +65,8 @@ const App = () => {
                 {/* Bao */}
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/payment" element={<Payment />} />
+                <Route path="/payment/success" element={<PaymentSuccess />} />
+                <Route path="/payment/cancel" element={<PaymentFail />}/>
             </Routes>
             <Footer />
         </Router>

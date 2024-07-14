@@ -31,9 +31,38 @@ export default function Payment() {
             });
     }, []);
 
-    // const formatPrice = (price) => {
-    //     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    // };
+    const handlePayment = () => {
+        const token = getToken() || getGoogleToken();
+        const orderDetails = cart.map((item) => ({
+            book: item.book._id,
+            order_quantity: item.quantity,
+            order_price: item.price,
+        }));
+
+        const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+        const totalPrice = cart.reduce((total, item) => total + item.total_price, 0);
+
+        axios.post(
+            'http://localhost:3000/api/payment/create_payment_paypal',
+            {
+                quantity: totalQuantity,
+                amount: totalPrice,
+                order_details: orderDetails,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+        .then((response) => {
+            // Redirect to the PayPal approval URL
+            window.location.href = response.data;
+        })
+        .catch((error) => {
+            console.error('Error creating PayPal payment:', error);
+        });
+    };
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -71,11 +100,11 @@ export default function Payment() {
                                 </div>
                             </div>
                             <div className="price col-span-2 flex items-center justify-center">
-                                ${(item.price)}
+                                ${item.price}
                             </div>
                             <div className="amount col-span-2 flex items-center justify-center">{item.quantity}</div>
                             <div className="totalPrice col-span-2 flex items-center justify-center">
-                                ${(item.total_price)}
+                                ${item.total_price}
                             </div>
                         </div>
                     ))}
@@ -91,7 +120,12 @@ export default function Payment() {
                             <div className="address">{dataUser.address}</div>
                         </div>
                     </div>
-                    <button className="bg-red-500 w-full p-4 h-30 rounded-lg text-white">Thanh toán</button>
+                    <button
+                        className="bg-red-500 w-full p-4 h-30 rounded-lg text-white"
+                        onClick={handlePayment}
+                    >
+                        Thanh toán
+                    </button>
                 </div>
             </div>
         </div>
