@@ -21,6 +21,12 @@ import BookDetailUser from './components/BookDetailUser';
 import ChangePassword from './components/Users/ChangePassword';
 import PrivateRoute from './components/PrivateRouter';
 import NotFound from './components/PageNotFound';
+
+import Cart from './components/Cart';
+import Payment from './components/Payment';
+
+import HistoryPayment from './components/Users/HistoryPayment';
+
 const App = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -50,9 +56,13 @@ const App = () => {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/resetpassword" element={<ResetPassword />} />
                 <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/change-password" element={<ChangePassword />} />
+                <Route path="/change-password" element={<PrivateRoute element={<ChangePassword />} googleBlock />} />
                 <Route path="/not-found" element={<NotFound />} />
+                <Route path="/history" element={<HistoryPayment />} />
                 <Route path="*" element={<NotFound />} />
+                {/* Bao */}
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/payment" element={<Payment />} />
             </Routes>
             <Footer />
         </Router>
