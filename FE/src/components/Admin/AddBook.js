@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import axios from '../../axiosConfig';
-import { getToken } from '../Login/app/static'; // Điều chỉnh đường dẫn nhập theo cần thiết
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { getToken } from '../Login/app/static'; // Adjust the import path as necessary
 
 const AddBook = () => {
   const [title, setTitle] = useState('');
@@ -12,6 +10,7 @@ const AddBook = () => {
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [description, setDescription] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +30,7 @@ const AddBook = () => {
         }
       });
       console.log('Book added:', response.data);
-      toast.success('Book added successfully!');
+      setShowModal(true);
       // Reset form fields here if needed
       setTitle('');
       setAuthor('');
@@ -42,8 +41,14 @@ const AddBook = () => {
       setDescription('');
     } catch (error) {
       console.error('Error adding book:', error);
-      toast.error('Failed to add book. Please try again.');
+      alert('Failed to add book. Please try again.'); // Show an alert for error handling
     }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    // Redirect to dashboard after closing modal
+    window.location.href = '/dashboard';
   };
 
   return (
@@ -90,9 +95,16 @@ const AddBook = () => {
         </div>
       </form>
 
-      {/* Toast container for displaying messages */}
-      <ToastContainer />
-
+      {/* Modal thành công */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black opacity-25"></div>
+          <div className="bg-white p-8 rounded-lg shadow-md z-50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <h2 className="text-2xl font-bold mb-4 text-orange-600">Book Added Successfully!</h2>
+            <button onClick={closeModal} className="px-4 py-2 bg-orange-500 text-white rounded-lg focus:outline-none hover:bg-orange-600">Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -28,7 +28,7 @@ function LoginUser() {
                     setUserInfo(res.data);
                     console.log('user info:', res.data);
                     console.log('Token: ' + res.data);
-                    navigate('/contact');
+                    navigate('/');
                 } else {
                     throw new Error('Token not found in response.');
                 }
