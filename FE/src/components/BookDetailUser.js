@@ -14,6 +14,8 @@ const BookDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [quantity, setQuantity] = useState(1);
+    const [commentText, setCommentText] = useState('');
+    const [rating, setRating] = useState(0);
 
     useEffect(() => {
         const fetchBook = async () => {
@@ -26,7 +28,7 @@ const BookDetail = () => {
                 });
                 setBook(response.data);
                 setSelectedImage(response.data.imageurls[0]);
-                setQuantity(1); // Reset quantity to 1 whenever book changes
+                setQuantity(1);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -48,8 +50,6 @@ const BookDetail = () => {
     const decreaseQuantity = () => {
         if (quantity > 1) {
             setQuantity(quantity - 1);
-        } else {
-            console.log('Quantity cannot be less than 1');
         }
     };
 
@@ -73,6 +73,45 @@ const BookDetail = () => {
         } catch (err) {
             console.error('Error adding item to cart:', err.message);
             toast.error('Đã xảy ra lỗi khi thêm vào giỏ hàng');
+        }
+    };
+
+    const handleCommentChange = (event) => {
+        setCommentText(event.target.value);
+    };
+
+    const handleRatingChange = (newRating) => {
+        setRating(newRating);
+    };
+
+    const postComment = async () => {
+        try {
+            const token = getToken();
+            await axios.post(
+                `/books/${id}/comments`,
+                {
+                    comment: commentText,
+                    rating: rating
+                },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+            toast.success('Bình luận của bạn đã được đăng thành công');
+            // Refresh book data after posting comment
+            const response = await axios.get(`/books/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setBook(response.data);
+            setCommentText('');
+            setRating(0);
+        } catch (err) {
+            console.error('Error posting comment:', err.message);
+            toast.error('Đã xảy ra lỗi khi đăng bình luận');
         }
     };
 
@@ -139,39 +178,68 @@ const BookDetail = () => {
                     </div>
                 </div>
             </div>
-          {/* Hiển thị các comment */}
-<div className="mt-2 bg-white shadow-lg rounded-lg overflow-hidden p-8">
-    <h3 className="text-3xl font-semibold mb-4">Comments:</h3>
-    {book.comments.length === 0 ? (
-        <p>No comments yet.</p>
-    ) : (
-        <ul className="divide-y divide-gray-200">
-            {book.comments.map((comment, index) => (
-                <li key={index} className="py-4">
-                    <div className="flex items-start">
-                        <FaUserCircle className="text-orange-500 mr-4 w-8 h-8" />
-                        <div className="flex-1">
-                            <div className="flex items-center mb-2">
-                                <p className="text-gray-800 font-semibold mr-2">{comment.author.fullname}</p>
-                            </div>
-                            <div className="flex items-center text-yellow-400 mb-2">
-                                {Array.from({ length: 5 }, (_, i) => (
-                                    <FaStar
-                                        key={i}
-                                        className={`mr-[3px] ${i < comment.rating ? 'text-yellow-400' : 'text-gray-300'}`}
-                                    />
-                                ))}
-                            </div>
-                            <p className="text-gray-600 text-sm mb-2">{format(new Date(comment.createdAt), 'dd/MM/yyyy HH:mm')}</p>
-                            <p className="text-gray-800">{comment.comment}</p>
-                        </div>
-                    </div>
-                </li>
-            ))}
-        </ul>
-    )}
-</div>
 
+            {/* Hiển thị các comment */}
+            <div className="mt-4 bg-white shadow-lg rounded-lg overflow-hidden p-8">
+                   {/* Form nhập bình luận */}
+                   
+                   <div className="mt-8">
+                    <h4 className="text-xl font-semibold mb-4">Add a comment:</h4>
+                    <div className="mb-4 flex items-center">
+                        <span className="mr-2 text-l">Rating:</span>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <FaStar
+                                key={star}
+                                className={`text-yellow-400 cursor-pointer ${star <= rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                                onClick={() => handleRatingChange(star)}
+                            />
+                        ))}
+                    </div>
+                    <textarea
+                        className="border border-gray-300 rounded-md w-full px-3 py-2 focus:outline-none focus:border-blue-500"
+                        rows="4"
+                        placeholder="Write your comment here..."
+                        value={commentText}
+                        onChange={handleCommentChange}
+                    ></textarea>
+                   
+                    <button onClick={postComment} className="mt-2 mb-10 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-o-500 focus:ring-offset-2">
+                        Post Comment
+                    </button>
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Comments:</h3>
+
+                {book.comments.length === 0 ? (
+                    <p>No comments yet.</p>
+                ) : (
+                    <ul className="divide-y divide-gray-200">
+                        {book.comments.map((comment, index) => (
+                            <li key={index} className="py-4">
+                                <div className="flex items-start">
+                                    <FaUserCircle className="text-orange-500 mr-4 w-8 h-8" />
+                                    <div className="flex-1">
+                                        <div className="flex items-center mb-2">
+                                            <p className="text-gray-800 font-semibold mr-2">{comment.author.fullname}</p>
+                                        </div>
+                                        <div className="flex items-center text-yellow-400 mb-2">
+                                            {Array.from({ length: 5 }, (_, i) => (
+                                                <FaStar
+                                                    key={i}
+                                                    className={`mr-[3px] ${i < comment.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                                                />
+                                            ))}
+                                        </div>
+                                        <p className="text-gray-600 text-xs mb-2">{format(new Date(comment.createdAt), 'dd/MM/yyyy HH:mm')}</p>
+                                        <p className="text-l">{comment.comment}</p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+
+             
+            </div>
         </div>
     );
 };

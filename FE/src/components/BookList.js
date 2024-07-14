@@ -111,7 +111,7 @@ const BookList = ({ searchTerm }) => {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <p className="text-gray-900 font-medium text-lg">
-                                        {formatPrice(book.price)}đ
+                                        {formatPrice(book.price)} USD
                                     </p>
                                     <button
                                         onClick={(e) => {
