@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getToken, getGoogleToken } from '../Login/app/static';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
     const [user, setUser] = useState(null);
@@ -12,11 +12,12 @@ const ProfilePage = () => {
         address: '',
     });
     const navigate = useNavigate();
+    const googleToken = getGoogleToken();
 
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const token = getToken() || getGoogleToken(); // Lấy token từ localStorage hoặc cookie của Google
+                const token = getToken() || googleToken; // Lấy token từ localStorage hoặc cookie của Google
                 const response = await fetch('http://localhost:3000/api/users/profile', {
                     method: 'GET',
                     headers: {
@@ -53,7 +54,7 @@ const ProfilePage = () => {
 
     const handleSaveProfile = async () => {
         try {
-            const token = getToken() || getGoogleToken(); // Lấy token từ localStorage hoặc cookie của Google
+            const token = getToken() || googleToken; // Lấy token từ localStorage hoặc cookie của Google
             const response = await fetch('http://localhost:3000/api/users/editProfile', {
                 method: 'POST',
                 headers: {
@@ -171,20 +172,22 @@ const ProfilePage = () => {
                             >
                                 Update Profile
                             </button>
-                            <button
-                                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                onClick={() => {
-                                    /* Handle navigation back to home */
-                                }}
+
+                            <Link
+                                to="/"
+                                className="bg-gray-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
-                                Back to Home
-                            </button>
-                            <button
-                                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                onClick={handleChangePassword}
-                            >
-                                Change Password
-                            </button>
+                                Back to Homepage
+                            </Link>
+
+                            {!googleToken && (
+                                <button
+                                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    onClick={handleChangePassword}
+                                >
+                                    Change Password
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
