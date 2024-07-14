@@ -51,7 +51,7 @@ const App = () => {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/resetpassword" element={<ResetPassword />} />
                 <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/change-password" element={<ChangePassword />} />
+                <Route path="/change-password" element={<PrivateRoute element={<ChangePassword />} googleBlock />} />
                 <Route path="/not-found" element={<NotFound />} />
                 <Route path="/history" element={<HistoryPayment />} />
                 <Route path="*" element={<NotFound />} />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getToken } from '../Login/app/static';
+import { getToken, removeToken } from '../Login/app/static';
 import { useNavigate } from 'react-router-dom';
 
 const ChangePassword = () => {
@@ -8,6 +8,7 @@ const ChangePassword = () => {
         newPassword: '',
     });
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -35,7 +36,12 @@ const ChangePassword = () => {
             if (!response.ok) {
                 throw new Error('Failed to change password');
             }
-            navigate('/profile');
+            setSuccess(true);
+            removeToken();
+            setTimeout(() => {
+                navigate('/login');
+                window.location.reload();
+            }, 4000);
         } catch (error) {
             console.error('Error changing password:', error);
             setError('Failed to change password. Please try again.');
@@ -46,6 +52,9 @@ const ChangePassword = () => {
         <div className="container mx-auto mt-8">
             <h1 className="text-3xl font-bold mb-6 text-center">Change Password</h1>
             {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+            {success && (
+                <p className="text-green-500 mb-4 text-center">Password changed successfully. Please log in again...</p>
+            )}
             <form
                 className="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden p-6"
                 onSubmit={handleSubmit}
