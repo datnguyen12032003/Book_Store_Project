@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 var paymentSchema = new mongoose.Schema(
   {
-    TxnRef: {
+    paymentToken: {
       type: String,
       required: true,
     },
@@ -29,7 +29,7 @@ var paymentSchema = new mongoose.Schema(
     },
     payment_status: {
       type: String,
-      default: "Pending", //pending là chưa thanh toán
+      default: "Pending",
     },
   }
   // {
