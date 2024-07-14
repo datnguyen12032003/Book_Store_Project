@@ -155,7 +155,7 @@ const BookDetail = () => {
                             <p className="text-gray-900 font-medium">Author: <span className="text-gray-600">{book.author}</span></p>
                             <p className="text-gray-900 font-medium">Genre: <span className="text-gray-600">{book.genre}</span></p>
                         </div>
-                        <p className="text-gray-900 font-medium text-lg">${book.price}</p>
+                        <p className="text-gray-900 font-medium text-lg">{book.price}.00 USD</p>
                         <p className="text-gray-700">Published by {book.publisher}</p>
                         <p className="text-gray-700">Số lượng hàng sẵn có: {book.quantity}</p>
                     </div>
