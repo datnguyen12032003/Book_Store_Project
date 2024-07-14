@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../axiosConfig';
-import { getGoogleToken, getToken } from '../components/Login/app/static'; // Adjust the import path as necessary
-import CartItem from './CartItem'; // Adjust the import path as necessary
+import { getGoogleToken, getToken } from '../components/Login/app/static';
+import CartItem from './CartItem';
 import { useNavigate } from 'react-router-dom';
 
 export default function Cart() {
@@ -20,7 +20,6 @@ export default function Cart() {
                     },
                 });
                 setCart(response.data);
-                console.log(response.data);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -31,8 +30,23 @@ export default function Cart() {
         fetchCart();
     }, []);
 
-    const formatPrice = (price) => {
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const updateCart = (itemId, newQuantity, newTotalPrice) => {
+        const updatedCart = cart.map((item) => {
+            if (item._id === itemId) {
+                return {
+                    ...item,
+                    quantity: newQuantity,
+                    total_price: newTotalPrice,
+                };
+            }
+            return item;
+        });
+        setCart(updatedCart);
+    };
+
+    const handleRemoveFromCart = (itemId) => {
+        const updatedCart = cart.filter((item) => item._id !== itemId);
+        setCart(updatedCart);
     };
 
     const handleChangePayment = () => {
@@ -68,7 +82,14 @@ export default function Cart() {
                     {cart.length === 0 ? (
                         <div className="pt-10 text-center text-xl text-gray-700">Giỏ hàng trống</div>
                     ) : (
-                        cart.map((item) => <CartItem key={item._id} item={item} />)
+                        cart.map((item) => (
+                            <CartItem
+                                key={item._id}
+                                item={item}
+                                updateCart={updateCart}
+                                removeFromCart={handleRemoveFromCart}
+                            />
+                        ))
                     )}
                 </div>
                 <div className="rightCart w-1/4 pl-6">
@@ -76,11 +97,16 @@ export default function Cart() {
                         <div className="total flex justify-between">
                             <div className="provisionalInvoice">Tổng tiền</div>
                             <div className="font-medium text-red-600 text-lg">
-                                {formatPrice(calculateTotalPrice())}đ
+                                ${calculateTotalPrice()}
                             </div>
                         </div>
                     </div>
-                    <button onClick={handleChangePayment} className="bg-red-500 w-full p-4 h-30 rounded-lg text-white">Mua hàng</button>
+                    <button
+                        onClick={handleChangePayment}
+                        className="bg-red-500 w-full p-4 h-30 rounded-lg text-white"
+                    >
+                        Mua hàng
+                    </button>
                 </div>
             </div>
         </div>

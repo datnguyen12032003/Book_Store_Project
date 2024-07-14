@@ -4,9 +4,35 @@ const Books = require("../models/book");
 const authenticate = require("../loaders/authenticate");
 const Inventory = require("../models/inventory");
 const cors = require("../loaders/cors");
+const Order = require("../models/order");
 
 const bookRouter = express.Router();
 bookRouter.use(bodyParser.json());
+
+bookRouter
+  .options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+  })
+  .get("/search", cors.cors, async (req, res, next) => {
+    try {
+      const { title } = req.query;
+
+      if (!title) {
+        return res
+          .status(400)
+          .json({ message: "Title query parameter is required" });
+      }
+
+      // Perform the search
+      const books = await Books.find({
+        title: { $regex: title, $options: "i" },
+      });
+
+      res.status(200).json(books);
+    } catch (err) {
+      next(err);
+    }
+  });
 
 //list all genre
 bookRouter
@@ -357,12 +383,30 @@ bookRouter
       .catch((err) => next(err));
   })
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+    var comment = false;
+    Order.findOne({ user: req.user._id, order_status: "Success" }).then({
+      //check if the user has ordered the book
+      if(order) {
+        for (let i = 0; i < order.order_details.length; i++) {
+          if (order.order_details[i].book.toString() === req.params.bookId) {
+            comment = true;
+            break;
+          }
+        }
+      },
+    });
+
     Books.findById(req.params.bookId).then(
       (book) => {
         if (book != null) {
           req.body.author = req.user._id; //add the author to the comment
           for (let i = 0; i < book.comments.length; i++) {
-            if (
+            if (comment === false) {
+              res.statusCode = 403;
+              res.setHeader("Content-Type", "application/json");
+              res.json({ message: "You have not ordered this book" });
+              return;
+            } else if (
               book.comments[i].author.toString() === req.user._id.toString()
             ) {
               //check if the user has already commented

@@ -88,9 +88,6 @@ cartRouter
           // If the book is already in the cart, update the quantity and total price
           cart.quantity += req.body.quantity;
           cart.total_price += req.body.price * req.body.quantity;
-          await Book.findByIdAndUpdate(req.body.book, {
-            $inc: { quantity: -req.body.quantity },
-          });
         } else {
           // If the book is not in the cart, create a new cart item
           cart = new Cart({
@@ -99,10 +96,6 @@ cartRouter
             price: req.body.price,
             quantity: req.body.quantity,
             total_price: req.body.price * req.body.quantity,
-          });
-          // Update the quantity of the book
-          await Book.findByIdAndUpdate(req.body.book, {
-            $inc: { quantity: -req.body.quantity },
           });
         }
         await cart.save();
@@ -132,10 +125,6 @@ cartRouter
           res.json({ message: "Product not found in cart!" });
           return;
         }
-        //update book quantity
-        await Book.findByIdAndUpdate(req.params.productId, {
-          $inc: { quantity: cart.quantity },
-        });
         //delete cart item
         await Cart.findOneAndDelete({
           user: req.user._id,
