@@ -2,15 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from '../axiosConfig';
 import { getToken } from '../components/Login/app/static';
-import { FaMinus, FaPlus } from 'react-icons/fa'; // Import FaMinus and FaPlus
+import { FaMinus, FaPlus, FaStar, FaUserCircle } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { format } from 'date-fns';
+
 const BookDetail = () => {
     const { id } = useParams();
     const [book, setBook] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [quantity, setQuantity] = useState(1); // Default quantity to 1
-    const [totalPrice, setTotalPrice] = useState(0); // Initialize total price
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         const fetchBook = async () => {
@@ -18,12 +21,12 @@ const BookDetail = () => {
                 const token = getToken();
                 const response = await axios.get(`/books/${id}`, {
                     headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
                 setBook(response.data);
-                setSelectedImage(response.data.imageurls[0]); // Set the first image as default
-                setTotalPrice(response.data.price); // Set initial total price based on book price
+                setSelectedImage(response.data.imageurls[0]);
+                setQuantity(1); // Reset quantity to 1 whenever book changes
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -34,89 +37,45 @@ const BookDetail = () => {
         fetchBook();
     }, [id]);
 
-<<<<<<< HEAD
+    const increaseQuantity = () => {
+        if (quantity < book.quantity) {
+            setQuantity(quantity + 1);
+        } else {
+            toast.error('Số lượng hàng không đủ');
+        }
+    };
+
+    const decreaseQuantity = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        } else {
+            console.log('Quantity cannot be less than 1');
+        }
+    };
+
     const addToCart = async () => {
         try {
             const token = getToken();
-            const response = await axios.post(
-                '/cart/add',
-                {
-                    bookId: book._id,
-                    quantity: quantity,
-                    totalPrice: totalPrice,
-=======
-    const addToCart = async (book) => {
-        if (book.quantity === 0) {
-            alert('Hết hàng');
-            return;
-        }
-        try {
-            const token = getToken();
-            const response = await axios.post(
+            await axios.post(
                 '/cart',
                 {
                     book: book._id,
                     price: book.price,
-                    quantity: 1, // or any desired initial quantity
->>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
+                    quantity: quantity
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-<<<<<<< HEAD
+                        'Authorization': `Bearer ${token}`
+                    }
                 }
             );
-            // Handle success or navigate to cart
-            console.log('Added to cart:', response.data);
-=======
-                },
-            );
-            console.log('Added to cart:', response.data);
-            alert('Đã thêm vào giỏ hàng');
->>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
+            toast.success('Đã thêm vào giỏ hàng');
         } catch (err) {
-            console.error('Error adding to cart:', err.message);
+            console.error('Error adding item to cart:', err.message);
+            toast.error('Đã xảy ra lỗi khi thêm vào giỏ hàng');
         }
     };
 
-<<<<<<< HEAD
-    const updateQuantity = async (action) => {
-        try {
-            const token = getToken();
-            let response;
-            if (action === 'increase') {
-                response = await axios.put(
-                    `/cart/increase/${id}`,
-                    { quantity: quantity + 1 },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                setQuantity(quantity + 1);
-            } else if (action === 'decrease' && quantity > 1) {
-                response = await axios.put(
-                    `/cart/decrease/${id}`,
-                    { quantity: quantity - 1 },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                setQuantity(quantity - 1);
-            }
-            // Update total price after quantity change
-            setTotalPrice(response.data.totalPrice);
-        } catch (err) {
-            console.error('Error updating quantity:', err.message);
-        }
-    };
-
-=======
->>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
     if (loading) {
         return <div className="text-center py-8 text-xl text-blue-500">Loading...</div>;
     }
@@ -125,49 +84,32 @@ const BookDetail = () => {
         return <div className="text-center py-8 text-xl text-red-600">Error: {error}</div>;
     }
 
-    const formatPrice = (price) => {
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    };
-
     return (
         <div className="container mx-auto px-4 py-8">
-<<<<<<< HEAD
+            <ToastContainer />
             <div className="bg-white shadow-lg rounded-lg overflow-hidden flex">
                 <div className="w-2/5 p-4">
                     <div className="mb-4 flex justify-center items-center">
-                        <img
-                            src={selectedImage ? selectedImage.imageUrl : ''}
-                            alt="Selected"
-                            className="h-[400px] max-w-full max-h-screen object-contain rounded-lg shadow-md"
+                        <img 
+                            src={selectedImage.imageUrl} 
+                            alt="Selected" 
+                            className="h-[400px] max-w-full max-h-screen object-contain rounded-lg shadow-md" 
                         />
                     </div>
                     <div className="grid grid-cols-4 gap-4">
                         {book.imageurls.map((image, index) => (
                             <div key={index} className="relative group cursor-pointer" onClick={() => setSelectedImage(image)}>
-                                <img
-                                    src={image.imageUrl}
-                                    alt={`Image ${index}`}
-                                    className={`w-full h-24 object-cover rounded-lg shadow-md transition-transform duration-300 transform group-hover:scale-105 ${selectedImage === image ? 'border-2 border-blue-500' : ''}`}
+                                <img 
+                                    src={image.imageUrl} 
+                                    alt={`Image ${index}`} 
+                                    className={`w-full h-24 object-cover rounded-lg shadow-md transition-transform duration-300 transform group-hover:scale-105 ${selectedImage === image ? 'border-2 border-blue-500' : ''}`} 
                                 />
                             </div>
                         ))}
                     </div>
-=======
-            <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-                <div className="grid grid-cols-3 gap-4">
-                    {book.imageurls.map((image, index) => (
-                        <img
-                            key={index}
-                            src={image.imageUrl}
-                            alt={`Image ${index}`}
-                            className="w-full h-64 object-cover rounded-lg shadow-md"
-                        />
-                    ))}
->>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
                 </div>
                 <div className="w-1/2 p-4 mt-[50px] ml-[200px]">
                     <div className="mb-4">
-<<<<<<< HEAD
                         <h2 className="text-3xl font-semibold mb-2 text-gray-800">{book.title}</h2>
                         <p className="text-gray-700 mb-4">{book.description}</p>
                         <div className="mb-4">
@@ -175,21 +117,16 @@ const BookDetail = () => {
                             <p className="text-gray-900 font-medium">Genre: <span className="text-gray-600">{book.genre}</span></p>
                         </div>
                         <p className="text-gray-900 font-medium text-lg">${book.price}</p>
-                        <p className="text-gray-700">{book.pages} pages</p>
                         <p className="text-gray-700">Published by {book.publisher}</p>
+                        <p className="text-gray-700">Số lượng hàng sẵn có: {book.quantity}</p>
                     </div>
                     <div className="mt-auto">
                         <div className="flex items-center mb-4">
-                            <button onClick={() => updateQuantity('decrease')} className="mr-2 text-gray-500">
+                            <button onClick={decreaseQuantity} className="mr-2 text-gray-500">
                                 <FaMinus className="cursor-pointer" />
                             </button>
-                            <input
-                                type="text"
-                                className="w-12 text-center border-gray-300 rounded-md"
-                                value={quantity}
-                                readOnly
-                            />
-                            <button onClick={() => updateQuantity('increase')} className="ml-2 text-gray-500">
+                            <span className="text-gray-900 font-medium">{quantity}</span>
+                            <button onClick={increaseQuantity} className="ml-2 text-gray-500">
                                 <FaPlus className="cursor-pointer" />
                             </button>
                         </div>
@@ -198,29 +135,43 @@ const BookDetail = () => {
                         </button>
                         <button className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-6 py-2 hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             Buy Now
-=======
-                        <p className="text-gray-900 font-medium">
-                            Author: <span className="text-gray-600">{book.author}</span>
-                        </p>
-                        <p className="text-gray-900 font-medium">
-                            Genre: <span className="text-gray-600">{book.genre}</span>
-                        </p>
-                    </div>
-                    <div className="flex items-center justify-between mb-4">
-                        <p className="text-gray-900 font-medium text-lg">{formatPrice(book.price)}đ</p>
-                        <button
-                            onClick={(e) => {
-                                e.preventDefault();
-                                addToCart(book);
-                            }}
-                            className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-6 py-2 rounded-full hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                        >
-                            Thêm vào giỏ hàng
->>>>>>> 9cc646103a4c7563619436b6491e6e995ac5a8fa
                         </button>
                     </div>
                 </div>
             </div>
+          {/* Hiển thị các comment */}
+<div className="mt-2 bg-white shadow-lg rounded-lg overflow-hidden p-8">
+    <h3 className="text-3xl font-semibold mb-4">Comments:</h3>
+    {book.comments.length === 0 ? (
+        <p>No comments yet.</p>
+    ) : (
+        <ul className="divide-y divide-gray-200">
+            {book.comments.map((comment, index) => (
+                <li key={index} className="py-4">
+                    <div className="flex items-start">
+                        <FaUserCircle className="text-orange-500 mr-4 w-8 h-8" />
+                        <div className="flex-1">
+                            <div className="flex items-center mb-2">
+                                <p className="text-gray-800 font-semibold mr-2">{comment.author.fullname}</p>
+                            </div>
+                            <div className="flex items-center text-yellow-400 mb-2">
+                                {Array.from({ length: 5 }, (_, i) => (
+                                    <FaStar
+                                        key={i}
+                                        className={`mr-[3px] ${i < comment.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                                    />
+                                ))}
+                            </div>
+                            <p className="text-gray-600 text-sm mb-2">{format(new Date(comment.createdAt), 'dd/MM/yyyy HH:mm')}</p>
+                            <p className="text-gray-800">{comment.comment}</p>
+                        </div>
+                    </div>
+                </li>
+            ))}
+        </ul>
+    )}
+</div>
+
         </div>
     );
 };

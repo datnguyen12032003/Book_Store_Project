@@ -10,7 +10,7 @@ const Navbar = ({ onSearch }) => {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [dataUser, setDataUser] = useState({});
-    const [totalBook, setTotalBook] = useState([]);
+    const [cartItemCount, setCartItemCount] = useState(0); // State để lưu trữ số lượng sản phẩm trong giỏ hàng
 
     useEffect(() => {
         const token = getToken() || getGoogleToken();
@@ -31,6 +31,7 @@ const Navbar = ({ onSearch }) => {
     useEffect(() => {
         if (isLoggedIn) {
             fetchUserData();
+            fetchCartItemCount(); // Gọi hàm để fetch số lượng sản phẩm trong giỏ hàng khi đã đăng nhập
         }
     }, [isLoggedIn]);
 
@@ -51,30 +52,21 @@ const Navbar = ({ onSearch }) => {
             });
     };
 
-    useEffect(() => {
+    const fetchCartItemCount = () => {
         const token = getToken() || getGoogleToken();
-        // Fetch user profile data when component mounts
         axios
-            .get(
-                'http://localhost:3000/api/cart',
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+            .get('http://localhost:3000/api/cart', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
                 },
-                {
-                    withCredentials: true, // Ensure credentials are sent
-                },
-            )
+            })
             .then((response) => {
-                setTotalBook(response.data);
-                console.log(totalBook.length)
+                setCartItemCount(response.data.length); // Cập nhật số lượng sản phẩm trong giỏ hàng
             })
             .catch((error) => {
-                console.error('Error fetching user profile:', error);
+                console.error('Error fetching cart items:', error);
             });
-    }, []);
-
+    };
 
     const handleLogout = () => {
         removeToken();
@@ -115,7 +107,7 @@ const Navbar = ({ onSearch }) => {
                             </li>
                             <li className="relative group">
                                 <button className="hover:text-blue-300 focus:outline-none">
-                                    Xin chào, {(user && user.username) || dataUser.email}
+                                    {(user && user.username) || dataUser.email}
                                 </button>
                                 <ul className="absolute hidden group-hover:block right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
                                     <li>
@@ -136,13 +128,12 @@ const Navbar = ({ onSearch }) => {
                                             History Payment
                                         </Link>
                                     </li>
+                                    <li onClick={handleLogout} className="hover:text-blue-300">
+                                    Logout
+                                </li>
                                 </ul>
                             </li>
-                            <li>
-                                <button onClick={handleLogout} className="hover:text-blue-300">
-                                    Logout
-                                </button>
-                            </li>
+                            
                         </>
                     ) : (
                         <>
@@ -161,11 +152,21 @@ const Navbar = ({ onSearch }) => {
                                     Contact
                                 </Link>
                             </li>
+                            <li>
+                                        <Link to="/cart" className="hover:text-blue-300 relative flex items-center">
+                                            <AiOutlineShoppingCart className="w-6 h-6" />
+                                            {cartItemCount > 0 && (
+                                                <span className="bookQuantity absolute top-0 right-0 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                                                    {cartItemCount}
+                                                </span>
+                                            )}
+                                        </Link>
+                                    </li>
                             {isLoggedIn ? (
                                 <>
                                     <li className="relative group">
                                         <button className="hover:text-blue-300 focus:outline-none">
-                                            Xin chào, {(user && user.username) || dataUser.email}
+                                         {(user && user.username) || dataUser.email}
                                         </button>
                                         <ul className="absolute hidden group-hover:block right-0 mt-0 w-48 bg-white rounded-md shadow-lg py-1">
                                             <li>
@@ -186,21 +187,15 @@ const Navbar = ({ onSearch }) => {
                                                     History Payment
                                                 </Link>
                                             </li>
+                                           
+                                        <li onClick={handleLogout} className="block px-4 py-2 text-gray-800 hover:bg-blue-300">
+                                            Logout
+                                        
+                                    </li>
                                         </ul>
                                     </li>
-                                    <li>
-                                        <Link to="/cart" className="hover:text-blue-300 relative flex items-center">
-                                            <AiOutlineShoppingCart className="w-6 h-6" />
-                                            <span className="bookQuantity absolute top-0 right-0 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
-                                                {totalBook.length}
-                                            </span>
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <button onClick={handleLogout} className="hover:text-blue-300">
-                                            Logout
-                                        </button>
-                                    </li>
+                               
+                                   
                                 </>
                             ) : (
                                 <li>
