@@ -31,9 +31,9 @@ export default function Payment() {
             });
     }, []);
 
-    const formatPrice = (price) => {
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    };
+    // const formatPrice = (price) => {
+    //     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    // };
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -71,11 +71,11 @@ export default function Payment() {
                                 </div>
                             </div>
                             <div className="price col-span-2 flex items-center justify-center">
-                                {formatPrice(item.price)}đ
+                                ${(item.price)}
                             </div>
                             <div className="amount col-span-2 flex items-center justify-center">{item.quantity}</div>
                             <div className="totalPrice col-span-2 flex items-center justify-center">
-                                {formatPrice(item.total_price)}đ
+                                ${(item.total_price)}
                             </div>
                         </div>
                     ))}
