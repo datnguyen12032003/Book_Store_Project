@@ -21,6 +21,8 @@ import BookDetailUser from './components/BookDetailUser';
 import ChangePassword from './components/Users/ChangePassword';
 import PrivateRoute from './components/PrivateRouter';
 import NotFound from './components/PageNotFound';
+import Cart from './components/Cart';
+import Payment from './components/Payment';
 const App = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -53,6 +55,9 @@ const App = () => {
                 <Route path="/change-password" element={<ChangePassword />} />
                 <Route path="/not-found" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
+                {/* Bao */}
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/payment" element={<Payment />} />
             </Routes>
             <Footer />
         </Router>
