@@ -25,6 +25,24 @@ cartRouter
       )
       .catch((err) => next(err));
   })
+
+  //total number of products in cart
+//   cartRouter.get("/total", cors.cors, authenticate.verifyUser, (req, res, next) => {
+//     Cart.aggregate([
+//         { $match: { user: req.user._id } },
+//         { $group: { _id: null, totalCount: { $sum: "$quantity" } } }
+//     ])
+//     .then((result) => {
+//         let totalCount = 0;
+//         if (result.length > 0) {
+//             totalCount = result[0].totalCount;
+//         }
+//         res.statusCode = 200;
+//         res.setHeader("Content-Type", "application/json");
+//         res.json({ totalCount });
+//     })
+//     .catch((err) => next(err));
+// })
   //all cart
   // .get("/allcart", (req, res, next) => {
   //   Cart.find({})
@@ -41,6 +59,7 @@ cartRouter
   //     .catch((err) => next(err));
   // })
   //add product to cart
+  
   .post(
     "/",
     cors.corsWithOptions,
