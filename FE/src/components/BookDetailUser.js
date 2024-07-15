@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from '../axiosConfig';
-import { getToken } from '../components/Login/app/static';
+import { getToken, getGoogleToken } from '../components/Login/app/static';
 import { FaMinus, FaPlus, FaStar, FaUserCircle } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,11 +16,12 @@ const BookDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [commentText, setCommentText] = useState('');
     const [rating, setRating] = useState(0);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         const fetchBook = async () => {
             try {
-                const token = getToken();
+                const token = getToken() || getGoogleToken();
                 const response = await axios.get(`/books/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -36,7 +37,22 @@ const BookDetail = () => {
             }
         };
 
+        const fetchUserData = async () => {
+            try {
+                const token = getToken() || getGoogleToken();
+                const response = await axios.get('http://localhost:3000/api/users/profile', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
         fetchBook();
+        fetchUserData();
     }, [id]);
 
     const increaseQuantity = () => {
@@ -54,8 +70,13 @@ const BookDetail = () => {
     };
 
     const addToCart = async () => {
+        if (user && user.admin) {
+            toast.error('Admin users cannot add items to the cart.');
+            return;
+        }
+
         try {
-            const token = getToken();
+            const token = getToken() || getGoogleToken();
             await axios.post(
                 '/cart',
                 {
@@ -86,7 +107,7 @@ const BookDetail = () => {
 
     const postComment = async () => {
         try {
-            const token = getToken();
+            const token = getToken() || getGoogleToken();
             await axios.post(
                 `/books/${id}/comments`,
                 {
@@ -165,7 +186,7 @@ const BookDetail = () => {
                                 Genre: <span className="text-gray-600">{book.genre}</span>
                             </p>
                         </div>
-                        <p className="text-gray-900 font-medium text-lg">{book.price}.00 USD</p>
+                        <p className="text-gray-900 font-medium text-lg">{book.price} USD</p>
                         <p className="text-gray-700">Published by {book.publisher}</p>
                         <p className="text-gray-700">Số lượng hàng sẵn có: {book.quantity}</p>
                     </div>
@@ -181,11 +202,23 @@ const BookDetail = () => {
                         </div>
                         <button
                             onClick={addToCart}
-                            className="bg-gradient-to-r from-yellow-100 to-orange-200 text-orange-500 px-6 py-2 hover:from-yellow-200 hover:to-orange-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
+                            className={`${
+                                user && user.admin
+                                    ? 'bg-gray-400 cursor-not-allowed text-gray-600'
+                                    : 'bg-gradient-to-r from-yellow-100 to-orange-200 text-orange-500 hover:from-yellow-200 hover:to-orange-300 hover:text-white'
+                            } text-white px-6 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2`}
+                            disabled={user && user.admin}
                         >
                             Add to shopping cart
                         </button>
-                        <button className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-6 py-2 hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        <button
+                            className={`${
+                                user && user.admin
+                                    ? 'bg-gray-400 cursor-not-allowed text-gray-600'
+                                    : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'
+                            } text-white px-6 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                            disabled={user && user.admin}
+                        >
                             Buy Now
                         </button>
                     </div>
@@ -203,7 +236,7 @@ const BookDetail = () => {
                         {[1, 2, 3, 4, 5].map((star) => (
                             <FaStar
                                 key={star}
-                                className={`text-yellow-400 cursor-pointer ${
+                                className={`text-gray-300 cursor-pointer ${
                                     star <= rating ? 'text-yellow-500' : 'text-gray-300'
                                 }`}
                                 onClick={() => handleRatingChange(star)}
@@ -211,56 +244,48 @@ const BookDetail = () => {
                         ))}
                     </div>
                     <textarea
-                        className="border border-gray-300 rounded-md w-full px-3 py-2 focus:outline-none focus:border-blue-500"
+                        className="w-full p-2 border rounded mb-4"
                         rows="4"
-                        placeholder="Write your comment here..."
                         value={commentText}
                         onChange={handleCommentChange}
                     ></textarea>
-
                     <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         onClick={postComment}
-                        className="mt-2 mb-10 bg-orange-500 text-white px-4 py-2 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-o-500 focus:ring-offset-2"
                     >
                         Post Comment
                     </button>
                 </div>
-                <h3 className="text-xl font-semibold mb-4">Comments:</h3>
 
-                {book.comments.length === 0 ? (
-                    <p>No comments yet.</p>
-                ) : (
-                    <ul className="divide-y divide-gray-200">
-                        {book.comments.map((comment, index) => (
-                            <li key={index} className="py-4">
-                                <div className="flex items-start">
-                                    <FaUserCircle className="text-orange-500 mr-4 w-8 h-8" />
-                                    <div className="flex-1">
-                                        <div className="flex items-center mb-2">
-                                            <p className="text-gray-800 font-semibold mr-2">
-                                                {comment.author.fullname}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center text-yellow-400 mb-2">
-                                            {Array.from({ length: 5 }, (_, i) => (
-                                                <FaStar
-                                                    key={i}
-                                                    className={`mr-[3px] ${
-                                                        i < comment.rating ? 'text-yellow-400' : 'text-gray-300'
-                                                    }`}
-                                                />
-                                            ))}
-                                        </div>
-                                        <p className="text-gray-600 text-xs mb-2">
-                                            {format(new Date(comment.createdAt), 'dd/MM/yyyy HH:mm')}
-                                        </p>
-                                        <p className="text-l">{comment.comment}</p>
-                                    </div>
+                <div className="mt-8">
+                    <h3 className="text-xl font-semibold mb-4">Comments</h3>
+                    {book.comments && book.comments.length > 0 ? (
+                        book.comments.map((comment, index) => (
+                            <div key={index} className="bg-gray-100 p-4 rounded mb-4">
+                                <div className="flex items-center mb-2">
+                                    <FaUserCircle className="mr-2 text-gray-400" />
+                                    <h5 className="text-gray-900 font-semibold">{comment.username}</h5>
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                                <div className="flex items-center mb-2">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <FaStar
+                                            key={star}
+                                            className={`${
+                                                star <= comment.rating ? 'text-yellow-400' : 'text-gray-300'
+                                            }`}
+                                        />
+                                    ))}
+                                </div>
+                                <p className="text-gray-800">{comment.comment}</p>
+                                <p className="text-gray-600 text-sm mt-2">
+                                    {format(new Date(comment.date), 'dd/MM/yyyy')}
+                                </p>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-gray-600">No comments yet.</p>
+                    )}
+                </div>
             </div>
         </div>
     );
