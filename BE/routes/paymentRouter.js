@@ -18,7 +18,11 @@ paymentRouter
     authenticate.verifyUser,
     async function (req, res, next) {
       const { quantity, amount, order_details } = req.body;
-      const formattedAmount = parseFloat(amount).toFixed(2);
+
+      const fixNum = (num) => {
+        return num.toFixed(2);
+      };
+
       try {
         const listBook = await order_details.map((detail) => {
           return Book.findById(detail.book).exec();
@@ -39,6 +43,9 @@ paymentRouter
             quantity: detail.order_quantity,
           };
         });
+
+        const formattedAmount = fixNum(amount);
+
         console.log(items);
 
         const create_payment_json = {
@@ -59,10 +66,13 @@ paymentRouter
                 currency: "USD",
                 total: formattedAmount,
               },
-              description: "Hat for the best team ever",
+              description: "Best book store ever",
             },
           ],
         };
+
+        console.log(fixNum);
+        console.log(items);
 
         paypalConfig.payment.create(
           create_payment_json,

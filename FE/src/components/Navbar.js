@@ -126,12 +126,6 @@ const Navbar = ({ onSearch }) => {
                                     >
                                         Logout
                                     </li>
-<<<<<<< HEAD
-                                    <li onClick={handleLogout} className="hover:text-blue-300">
-                                        Logout
-                                    </li>
-=======
->>>>>>> edc25569ba0d8c7eecacc22bafa0a6ed7dddf8d4
                                 </ul>
                             </li>
                         </>
