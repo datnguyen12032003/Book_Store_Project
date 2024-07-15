@@ -27,22 +27,22 @@ cartRouter
   })
 
   //total number of products in cart
-//   cartRouter.get("/total", cors.cors, authenticate.verifyUser, (req, res, next) => {
-//     Cart.aggregate([
-//         { $match: { user: req.user._id } },
-//         { $group: { _id: null, totalCount: { $sum: "$quantity" } } }
-//     ])
-//     .then((result) => {
-//         let totalCount = 0;
-//         if (result.length > 0) {
-//             totalCount = result[0].totalCount;
-//         }
-//         res.statusCode = 200;
-//         res.setHeader("Content-Type", "application/json");
-//         res.json({ totalCount });
-//     })
-//     .catch((err) => next(err));
-// })
+  //   cartRouter.get("/total", cors.cors, authenticate.verifyUser, (req, res, next) => {
+  //     Cart.aggregate([
+  //         { $match: { user: req.user._id } },
+  //         { $group: { _id: null, totalCount: { $sum: "$quantity" } } }
+  //     ])
+  //     .then((result) => {
+  //         let totalCount = 0;
+  //         if (result.length > 0) {
+  //             totalCount = result[0].totalCount;
+  //         }
+  //         res.statusCode = 200;
+  //         res.setHeader("Content-Type", "application/json");
+  //         res.json({ totalCount });
+  //     })
+  //     .catch((err) => next(err));
+  // })
   //all cart
   // .get("/allcart", (req, res, next) => {
   //   Cart.find({})
@@ -59,7 +59,7 @@ cartRouter
   //     .catch((err) => next(err));
   // })
   //add product to cart
-  
+
   .post(
     "/",
     cors.corsWithOptions,
@@ -133,6 +133,36 @@ cartRouter
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
         res.json({ message: "Product removed from cart!" });
+      } catch (err) {
+        next(err);
+      }
+    }
+  )
+
+  .delete(
+    "/deleteCart",
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    async (req, res, next) => {
+      try {
+        //find cart item
+        let cart = await Cart.find({
+          user: req.user._id,
+        });
+        if (!cart) {
+          res.statusCode = 404;
+          res.setHeader("Content-Type", "application/json");
+          res.json({ message: "Cart not found!" });
+          return;
+        }
+        //delete cart item
+        Cart.deleteMany({ user: req.user._id })
+          .then((result) => {
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json({ message: "Product removed from cart!" });
+          })
+          .catch((err) => next(err));
       } catch (err) {
         next(err);
       }

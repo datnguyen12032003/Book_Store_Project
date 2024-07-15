@@ -174,7 +174,7 @@ uploadRouter
     }
   );
 
-  uploadRouter
+uploadRouter
   .route("/:bookId/setDefault/:imgId")
   .get(
     cors.cors,
@@ -190,7 +190,7 @@ uploadRouter
         }
 
         // Reset all images to not be default
-        book.imageurls.forEach(image => {
+        book.imageurls.forEach((image) => {
           image.defaultImg = false;
         });
 
@@ -202,7 +202,7 @@ uploadRouter
         }
 
         image.defaultImg = true;
-        await book.save();  // Save the entire book object to update the default image
+        await book.save(); // Save the entire book object to update the default image
 
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");

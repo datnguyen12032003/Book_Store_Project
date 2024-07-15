@@ -353,4 +353,22 @@ router.get("/profile", authenticate.verifyUser, (req, res, next) => {
   });
 });
 
+//all account
+router.get("/allaccount", (req, res, next) => {
+  User.find({ admin: false }).then((user) => {
+    res.statusCode = 200;
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.json(
+      user.map((user) => ({
+        username: user.username,
+        fullname: user.fullname,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+      }))
+    );
+  });
+});
+
 module.exports = router;
