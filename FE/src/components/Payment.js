@@ -1,12 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getGoogleToken, getToken } from './Login/app/static';
 
 export default function Payment() {
     const location = useLocation();
     const { cart } = location.state;
     const [dataUser, setDataUser] = useState({});
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = getToken() || getGoogleToken();
@@ -42,39 +43,48 @@ export default function Payment() {
         const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
         const totalPrice = cart.reduce((total, item) => total + item.total_price, 0);
 
-        axios.post(
-            'http://localhost:3000/api/payment/create_payment_paypal',
-            {
-                quantity: totalQuantity,
-                amount: totalPrice,
-                order_details: orderDetails,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
+        axios
+            .post(
+                'http://localhost:3000/api/payment/create_payment_paypal',
+                {
+                    quantity: totalQuantity,
+                    amount: totalPrice,
+                    order_details: orderDetails,
                 },
-            }
-        )
-        .then((response) => {
-            // Redirect to the PayPal approval URL
-            window.location.href = response.data;
-        })
-        .catch((error) => {
-            console.error('Error creating PayPal payment:', error);
-        });
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            )
+            .then((response) => {
+                // Redirect to the PayPal approval URL
+                window.location.href = response.data;
+            })
+            .catch((error) => {
+                console.error('Error creating PayPal payment:', error);
+            });
+    };
+
+    const handleCancelPayment = () => {
+        navigate('/cart');
+    };
+
+    const fixNumber = (number) => {
+        return Number(number.toFixed(2));
     };
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="pb-5 font-medium text-lg">THANH TOÁN</h1>
+            <h1 className="pb-5 font-medium text-lg">CHECK OUT</h1>
             <div className="flex">
                 <div className="leftCart w-3/4 pr-6">
                     <div className="cartTitle">
                         <div className="container grid grid-cols-12 gap-4 p-4 h-30 shadow-2xl rounded-lg">
-                            <div className="bookItem col-span-5 flex">Sản phẩm</div>
-                            <div className="price col-span-2 flex items-center justify-center">Đơn giá</div>
-                            <div className="amount col-span-2 flex items-center justify-center">Số lượng</div>
-                            <div className="totalPrice col-span-2 flex items-center justify-center">Thành tiền</div>
+                            <div className="bookItem col-span-5 flex">Product</div>
+                            <div className="price col-span-2 flex items-center justify-center">Price</div>
+                            <div className="amount col-span-2 flex items-center justify-center">Quantity</div>
+                            <div className="totalPrice col-span-2 flex items-center justify-center">Subtotal</div>
                             <div className="remove col-span-1 flex items-center justify-center"></div>
                         </div>
                     </div>
@@ -99,12 +109,10 @@ export default function Payment() {
                                     {item.book.title}
                                 </div>
                             </div>
-                            <div className="price col-span-2 flex items-center justify-center">
-                                ${item.price}
-                            </div>
+                            <div className="price col-span-2 flex items-center justify-center">${fixNumber(item.price)}</div>
                             <div className="amount col-span-2 flex items-center justify-center">{item.quantity}</div>
                             <div className="totalPrice col-span-2 flex items-center justify-center">
-                                ${item.total_price}
+                                ${fixNumber(item.total_price)}
                             </div>
                         </div>
                     ))}
@@ -112,7 +120,7 @@ export default function Payment() {
                 <div className="rightCart w-1/4 pl-6">
                     <div className="shadow-2xl p-4 mb-5 h-30 rounded-lg">
                         <div className="total justify-between ">
-                            <div className="provisionalInvoice text-lg pb-3">Thông tin người dùng</div>
+                            <div className="provisionalInvoice text-lg pb-3">User Information</div>
                             <div className="upperInfo flex pb-3 grid grid-cols-12">
                                 <div className="name pr-2 border-r-2 col-span-6">{dataUser.fullname}</div>
                                 <div className="phone pl-2 col-span-6">{dataUser.phone}</div>
@@ -120,12 +128,17 @@ export default function Payment() {
                             <div className="address">{dataUser.address}</div>
                         </div>
                     </div>
-                    <button
-                        className="bg-red-500 w-full p-4 h-30 rounded-lg text-white"
-                        onClick={handlePayment}
-                    >
-                        Thanh toán
+                    <button className="bg-red-500 w-full p-4 h-30 rounded-lg text-white" onClick={handlePayment}>
+                        CHECKOUT
                     </button>
+                    <div className='pt-4'>
+                        <button
+                            onClick={handleCancelPayment}
+                            className="bg-slate-300 w-full p-4 h-30 rounded-lg text-black"
+                        >
+                            CANCEL
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
