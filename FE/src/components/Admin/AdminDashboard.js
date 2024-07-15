@@ -24,9 +24,14 @@ const AdminDashboard = () => {
               <span className="text-lg font-semibold text-gray-800">Book List</span>
             </Link>
           </li>
-          <li className="py-2">
+          {/* <li className="py-2">
             <Link to="/addbook" className="block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out rounded-md p-3">
               <span className="text-lg font-semibold text-gray-800">Add Book</span>
+            </Link>
+          </li> */}
+           <li className="py-2">
+            <Link to="/history" className="block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out rounded-md p-3">
+              <span className="text-lg font-semibold text-gray-800">Orders History</span>
             </Link>
           </li>
           <li className="py-2">

@@ -80,6 +80,10 @@ var bookSchema = new mongoose.Schema(
     },
     imageurls: [bookImageSchema],
     comments: [commentSchema],
+    status: {
+      type: Boolean,
+      default: false
+    },
   }
   // {
   //   timestamps: true,

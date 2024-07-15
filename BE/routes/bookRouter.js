@@ -9,6 +9,35 @@ const Order = require("../models/order");
 const bookRouter = express.Router();
 bookRouter.use(bodyParser.json());
 
+//set true false for book
+bookRouter
+  .options(cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+  })
+  .get("/:bookId/set", cors.cors, async (req, res, next) => {
+    try{ 
+      const { query } = req.query;
+      const book = await Books.findById(req.params.bookId);
+      if (!book) {
+        return res.status(404).json({ message: "Book not found" });
+      }
+
+      console.log(query);
+      console.log(book);
+      if (query === "true") {
+        book.status = true;
+      } else if (query === "false") {
+        book.status = false;
+      } else {
+        return res.status(400).json({ message: "Query parameter is required" });
+      }
+      await book.save();
+      res.status(200).json(book);
+    }catch(err){
+      next(err);
+    }
+  });
+
 bookRouter
   .options(cors.corsWithOptions, (req, res) => {
     res.sendStatus(200);
@@ -483,6 +512,7 @@ bookRouter
     }
   );
 
+  
 //Comment by ID
 bookRouter
   .route("/:bookId/comments/:commentId")

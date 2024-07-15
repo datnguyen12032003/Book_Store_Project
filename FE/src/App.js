@@ -28,6 +28,7 @@ import Payment from './components/Payment';
 import HistoryPayment from './components/Users/HistoryPayment';
 import PaymentSuccess from './components/PaymentSuccessful';
 import PaymentFail from './components/PaymentFail';
+import HistoryOrdersAdmin from './components/Admin/HistoryOrdersAdmin';
 
 const App = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -53,6 +54,7 @@ const App = () => {
                 <Route path="/edit/:id" element={<EditBook />} />
                 <Route path="/books/:id/upload/many" element={<UploadMultipleImages />} />
                 <Route path="/book/:id" element={<BookDetailUser />} />
+                <Route path="/history" element={<HistoryOrdersAdmin />} />
                 {/* Viet */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
