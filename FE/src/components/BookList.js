@@ -81,8 +81,9 @@ const BookList = ({ searchTerm }) => {
     const filteredBooks = Array.isArray(books)
         ? books.filter(
               (book) =>
-                  book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  book.author.toLowerCase().includes(searchTerm.toLowerCase()),
+                  (book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  book.author.toLowerCase().includes(searchTerm.toLowerCase())) &&
+                  book.status === true // only include books with status true
           )
         : [];
 
@@ -131,7 +132,7 @@ const BookList = ({ searchTerm }) => {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <p className="text-gray-900 font-medium text-lg">
-                                        {formatPrice(book.price)}.00 USD
+                                        {formatPrice(book.price)} USD
                                     </p>
                                     <button
                                         onClick={(e) => {

@@ -186,7 +186,7 @@ const BookDetail = () => {
                                 Genre: <span className="text-gray-600">{book.genre}</span>
                             </p>
                         </div>
-                        <p className="text-gray-900 font-medium text-lg">{book.price}.00 USD</p>
+                        <p className="text-gray-900 font-medium text-lg">{book.price} USD</p>
                         <p className="text-gray-700">Published by {book.publisher}</p>
                         <p className="text-gray-700">Số lượng hàng sẵn có: {book.quantity}</p>
                     </div>
@@ -236,7 +236,7 @@ const BookDetail = () => {
                         {[1, 2, 3, 4, 5].map((star) => (
                             <FaStar
                                 key={star}
-                                className={`text-yellow-400 cursor-pointer ${
+                                className={`text-gray-300 cursor-pointer ${
                                     star <= rating ? 'text-yellow-500' : 'text-gray-300'
                                 }`}
                                 onClick={() => handleRatingChange(star)}

@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import axios from '../../axiosConfig'; // Ensure correct import path
 import ImageUploader from './ImageUploader'; // Ensure correct import path
 import { getToken } from '../Login/app/static'; // Ensure correct import path
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookDetail = ({ books }) => {
     const { id } = useParams();
@@ -20,7 +22,7 @@ const BookDetail = ({ books }) => {
                 });
                 setBook(response.data);
                 // Set default image ID from fetched data
-                const defaultImage = response.data.imageurls.find((image) => image.defaultImg);
+                const defaultImage = response.data.imageurls?.find((image) => image.defaultImg);
                 if (defaultImage) {
                     setDefaultImageId(defaultImage._id);
                 }
@@ -34,7 +36,7 @@ const BookDetail = ({ books }) => {
             if (selectedBook) {
                 setBook(selectedBook);
                 // Set default image ID from selected book
-                const defaultImage = selectedBook.imageurls.find((image) => image.defaultImg);
+                const defaultImage = selectedBook.imageurls?.find((image) => image.defaultImg);
                 if (defaultImage) {
                     setDefaultImageId(defaultImage._id);
                 }
@@ -62,6 +64,7 @@ const BookDetail = ({ books }) => {
                 },
             });
             setDefaultImageId(imageId);
+            console.log('Default image set successfully');
         } catch (error) {
             console.error('Error setting default image:', error);
         }
@@ -75,14 +78,33 @@ const BookDetail = ({ books }) => {
                     Authorization: `Bearer ${token}`,
                 },
             });
+
             // After deletion, update the book state to reflect the removed image
             const updatedImages = book.imageurls.filter((image) => image._id !== imageId);
             setBook((prevBook) => ({
                 ...prevBook,
                 imageurls: updatedImages,
             }));
+            console.log('Image deleted successfully');
         } catch (error) {
             console.error('Error deleting image:', error);
+        }
+    };
+
+    const setBookStatus = async (status) => {
+        try {
+            const token = getToken();
+            const response = await axios.get(`/books/${book._id}/set?query=${status}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setBook(response.data);
+            console.log(`Book status set to ${status}`);
+            toast.success(`Book status set to ${status}`);
+        } catch (error) {
+            console.error(`Error setting book status to ${status}:`, error);
+            toast.error('Error setting book status');
         }
     };
 
@@ -92,6 +114,7 @@ const BookDetail = ({ books }) => {
 
     return (
         <div className="container mx-auto p-4">
+            {/* <ToastContainer /> */}
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-bold text-black">{book.title}</h2>
                 <div className="ml-6">
@@ -101,6 +124,18 @@ const BookDetail = ({ books }) => {
                     >
                         Edit Book
                     </Link>
+                    <button
+                        onClick={() => setBookStatus('true')}
+                        className="ml-2 bg-green-500 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 hover:bg-green-600"
+                    >
+                        Set Active
+                    </button>
+                    <button
+                        onClick={() => setBookStatus('false')}
+                        className="ml-2 bg-red-500 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 hover:bg-red-600"
+                    >
+                        Set Inactive
+                    </button>
                 </div>
             </div>
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
