@@ -41,27 +41,29 @@ export default function Payment() {
 
         const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
         const totalPrice = cart.reduce((total, item) => total + item.total_price, 0);
+        console.log(totalPrice);
 
-        axios.post(
-            'http://localhost:3000/api/payment/create_payment_paypal',
-            {
-                quantity: totalQuantity,
-                amount: totalPrice,
-                order_details: orderDetails,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
+        axios
+            .post(
+                'http://localhost:3000/api/payment/create_payment_paypal',
+                {
+                    quantity: totalQuantity,
+                    amount: totalPrice,
+                    order_details: orderDetails,
                 },
-            }
-        )
-        .then((response) => {
-            // Redirect to the PayPal approval URL
-            window.location.href = response.data;
-        })
-        .catch((error) => {
-            console.error('Error creating PayPal payment:', error);
-        });
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            )
+            .then((response) => {
+                // Redirect to the PayPal approval URL
+                window.location.href = response.data;
+            })
+            .catch((error) => {
+                console.error('Error creating PayPal payment:', error);
+            });
     };
 
     return (
@@ -99,9 +101,7 @@ export default function Payment() {
                                     {item.book.title}
                                 </div>
                             </div>
-                            <div className="price col-span-2 flex items-center justify-center">
-                                ${item.price}
-                            </div>
+                            <div className="price col-span-2 flex items-center justify-center">${item.price}</div>
                             <div className="amount col-span-2 flex items-center justify-center">{item.quantity}</div>
                             <div className="totalPrice col-span-2 flex items-center justify-center">
                                 ${item.total_price}
@@ -120,10 +120,7 @@ export default function Payment() {
                             <div className="address">{dataUser.address}</div>
                         </div>
                     </div>
-                    <button
-                        className="bg-red-500 w-full p-4 h-30 rounded-lg text-white"
-                        onClick={handlePayment}
-                    >
+                    <button className="bg-red-500 w-full p-4 h-30 rounded-lg text-white" onClick={handlePayment}>
                         Thanh toán
                     </button>
                 </div>

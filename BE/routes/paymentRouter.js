@@ -18,6 +18,7 @@ paymentRouter
     authenticate.verifyUser,
     async function (req, res, next) {
       const { quantity, amount, order_details } = req.body;
+      const formattedAmount = parseFloat(amount).toFixed(2);
       try {
         const listBook = await order_details.map((detail) => {
           return Book.findById(detail.book).exec();
@@ -56,7 +57,7 @@ paymentRouter
               },
               amount: {
                 currency: "USD",
-                total: amount,
+                total: formattedAmount,
               },
               description: "Hat for the best team ever",
             },
@@ -194,9 +195,8 @@ paymentRouter
             { $inc: { quantity: detail.order_quantity } }
           );
         }
-console.log(order);
+        console.log(order);
         res.status(200).redirect("http://localhost:3001/payment/cancel");
-       
       }
     } catch (err) {
       next(err);
