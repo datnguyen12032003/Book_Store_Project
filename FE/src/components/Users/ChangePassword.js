@@ -49,7 +49,7 @@ const ChangePassword = () => {
     };
 
     return (
-        <div className="container mx-auto mt-8">
+        <div className="container mx-auto mt-8 mb-8">
             <h1 className="text-3xl font-bold mb-6 text-center">Change Password</h1>
             {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
             {success && (

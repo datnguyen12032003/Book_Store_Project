@@ -17,7 +17,7 @@ const ProfilePage = () => {
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const token = getToken() || googleToken; // Lấy token từ localStorage hoặc cookie của Google
+                const token = getToken() || googleToken;
                 const response = await fetch('http://localhost:3000/api/users/profile', {
                     method: 'GET',
                     headers: {
@@ -54,7 +54,7 @@ const ProfilePage = () => {
 
     const handleSaveProfile = async () => {
         try {
-            const token = getToken() || googleToken; // Lấy token từ localStorage hoặc cookie của Google
+            const token = getToken() || googleToken;
             const response = await fetch('http://localhost:3000/api/users/editProfile', {
                 method: 'POST',
                 headers: {
@@ -91,11 +91,11 @@ const ProfilePage = () => {
 
     return (
         <div className="container mx-auto mt-8 h-[550px]">
-            <h1 className="text-3xl font-bold mb-6 text-center">User Profile</h1>
+            <h1 className="text-3xl font-bold mb-6 text-center text-orange-600">User Profile</h1>
             {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
             {isEditing ? (
                 <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-                    <div className="px-6 py-8 bg-blue-100">
+                    <div className="px-6 py-8 bg-orange-100">
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Fullname:</label>
                             <input
@@ -135,7 +135,7 @@ const ProfilePage = () => {
                             </button>
                             <button
                                 onClick={handleSaveProfile}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
                                 Save
                             </button>
@@ -144,7 +144,7 @@ const ProfilePage = () => {
                 </div>
             ) : user ? (
                 <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-                    <div className="px-6 py-8 bg-blue-100">
+                    <div className="px-6 py-8 bg-orange-100">
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Fullname:</label>
                             <p className="text-lg text-gray-800">{user.fullname}</p>
@@ -168,14 +168,14 @@ const ProfilePage = () => {
                         <div className="flex justify-between">
                             <button
                                 onClick={handleEditProfile}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
                                 Update Profile
                             </button>
 
                             <Link
                                 to="/"
-                                className="bg-gray-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
                                 Back to Homepage
                             </Link>
