@@ -82,61 +82,64 @@ function RegisterUser() {
     };
 
     return (
-        <div className='h-[850px]'>
-        <>
-            <ToastContainer />
-            <div className={cx('wrapper-signup')}>
-                <div className={cx('inner')}>
-                    <div className={cx('header-form-login')}>
-                        <span>Sign Up</span>
-                        <p>Create your account to get full access</p>
-                    </div>
-                    <div className={cx('input-box')}>
-                        <div className={cx('form-input')}>
-                            <label>UserName</label>
-                            <input placeholder="Enter User Name" onChange={(e) => setUsername(e.target.value)} />
+        <div className="h-[850px]">
+            <>
+                <ToastContainer />
+                <div className={cx('wrapper-signup')}>
+                    <div className={cx('inner')}>
+                        <div className={cx('header-form-login')}>
+                            <span>Sign Up</span>
+                            <p>Create your account to get full access</p>
                         </div>
-                        <div className={cx('form-input')}>
-                            <label>Full Name</label>
-                            <input placeholder="Enter Full Name" onChange={(e) => setFullname(e.target.value)} />
-                        </div>
+                        <div className={cx('input-box')}>
+                            <div className={cx('form-input')}>
+                                <label>UserName</label>
+                                <input placeholder="Enter User Name" onChange={(e) => setUsername(e.target.value)} />
+                            </div>
+                            <div className={cx('form-input')}>
+                                <label>Full Name</label>
+                                <input placeholder="Enter Full Name" onChange={(e) => setFullname(e.target.value)} />
+                            </div>
 
-                        <div className={cx('form-input')}>
-                            <label>Email Address</label>
-                            <input placeholder="Enter Email Address" onChange={(e) => setEmail(e.target.value)} />
-                        </div>
-                        <div className={cx('form-input')}>
-                            <label>Phone</label>
-                            <input placeholder="Enter Telephone Number" onChange={(e) => setPhone(e.target.value)} />
-                        </div>
-                        <div className={cx('form-input')}>
-                            <label>Address</label>
-                            <input placeholder="Enter Your Address" onChange={(e) => setAddress(e.target.value)} />
-                        </div>
+                            <div className={cx('form-input')}>
+                                <label>Email Address</label>
+                                <input placeholder="Enter Email Address" onChange={(e) => setEmail(e.target.value)} />
+                            </div>
+                            <div className={cx('form-input')}>
+                                <label>Phone</label>
+                                <input
+                                    placeholder="Enter Telephone Number"
+                                    onChange={(e) => setPhone(e.target.value)}
+                                />
+                            </div>
+                            <div className={cx('form-input')}>
+                                <label>Address</label>
+                                <input placeholder="Enter Your Address" onChange={(e) => setAddress(e.target.value)} />
+                            </div>
 
-                        <div className={cx('form-input')}>
-                            <label>Password</label>
+                            <div className={cx('form-input')}>
+                                <label>Password</label>
 
-                            <input
-                                placeholder="Enter Password"
-                                type="password"
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                                <input
+                                    placeholder="Enter Password"
+                                    type="password"
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className={cx('login-footer')}>
-                        <p>
-                            Already have an account?
-                            <Link id={cx('link')} to="/login">
-                                Login
-                            </Link>
-                            here
-                        </p>
-                        <button onClick={handleRegister}>Sign Up</button>
+                        <div className={cx('login-footer')}>
+                            <p>
+                                Already have an account?&nbsp;
+                                <Link id={cx('link')} to="/login">
+                                    Login
+                                </Link>
+                                &nbsp;here
+                            </p>
+                            <button onClick={handleRegister}>Sign Up</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </>
+            </>
         </div>
     );
 }

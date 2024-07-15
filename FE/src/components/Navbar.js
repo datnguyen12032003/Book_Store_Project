@@ -88,7 +88,7 @@ const Navbar = ({ onSearch }) => {
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <div className="flex items-center space-x-4">
                     <Link to="/" className="text-3xl font-semibold tracking-tight hover:text-white">
-                        FB88.com
+                        BestBook
                     </Link>
                     <input
                         type="text"
@@ -109,7 +109,7 @@ const Navbar = ({ onSearch }) => {
                                 <button className="hover:text-blue-300 focus:outline-none">
                                     {(user && user.username) || dataUser.email}
                                 </button>
-                                <ul className="absolute hidden group-hover:block right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+                                <ul className="dropdown-menu z-50 absolute hidden group-hover:block right-0 mt-0 w-48 bg-white rounded-md shadow-lg py-1">
                                     <li>
                                         <Link
                                             to="/profile"
@@ -119,21 +119,15 @@ const Navbar = ({ onSearch }) => {
                                             Profile
                                         </Link>
                                     </li>
-                                    <li>
-                                        <Link
-                                            to="/history"
-                                            onClick={handleHistoryClick}
-                                            className="block px-4 py-2 text-gray-800 hover:bg-blue-300"
-                                        >
-                                            History Payment
-                                        </Link>
+
+                                    <li
+                                        onClick={handleLogout}
+                                        className="block px-4 py-2 text-gray-800 hover:bg-blue-300"
+                                    >
+                                        Logout
                                     </li>
-                                    <li onClick={handleLogout} className="hover:text-blue-300">
-                                    Logout
-                                </li>
                                 </ul>
                             </li>
-                            
                         </>
                     ) : (
                         <>
@@ -153,22 +147,22 @@ const Navbar = ({ onSearch }) => {
                                 </Link>
                             </li>
                             <li>
-                                        <Link to="/cart" className="hover:text-blue-300 relative flex items-center">
-                                            <AiOutlineShoppingCart className="w-6 h-6" />
-                                            {cartItemCount > 0 && (
-                                                <span className="bookQuantity absolute top-0 right-0 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
-                                                    {cartItemCount}
-                                                </span>
-                                            )}
-                                        </Link>
-                                    </li>
+                                <Link to="/cart" className="hover:text-blue-300 relative flex items-center">
+                                    <AiOutlineShoppingCart className="w-6 h-6" />
+                                    {cartItemCount > 0 && (
+                                        <span className="bookQuantity absolute top-0 right-0 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                                            {cartItemCount}
+                                        </span>
+                                    )}
+                                </Link>
+                            </li>
                             {isLoggedIn ? (
                                 <>
                                     <li className="relative group">
                                         <button className="hover:text-blue-300 focus:outline-none">
-                                         {(user && user.username) || dataUser.email}
+                                            {(user && user.username) || dataUser.email}
                                         </button>
-                                        <ul className="absolute hidden group-hover:block right-0 mt-0 w-48 bg-white rounded-md shadow-lg py-1">
+                                        <ul className="dropdown-menu z-50 absolute hidden group-hover:block right-0 mt-0 w-48 bg-white rounded-md shadow-lg py-1">
                                             <li>
                                                 <Link
                                                     to="/profile"
@@ -187,15 +181,15 @@ const Navbar = ({ onSearch }) => {
                                                     History Payment
                                                 </Link>
                                             </li>
-                                           
-                                        <li onClick={handleLogout} className="block px-4 py-2 text-gray-800 hover:bg-blue-300">
-                                            Logout
-                                        
-                                    </li>
+
+                                            <li
+                                                onClick={handleLogout}
+                                                className="block px-4 py-2 text-gray-800 hover:bg-blue-300"
+                                            >
+                                                Logout
+                                            </li>
                                         </ul>
                                     </li>
-                               
-                                   
                                 </>
                             ) : (
                                 <li>
