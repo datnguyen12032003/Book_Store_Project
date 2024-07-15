@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../axiosConfig';
 import { Link } from 'react-router-dom';
-import { getToken } from '../components/Login/app/static';
+import { getToken, getGoogleToken } from '../components/Login/app/static';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -9,6 +9,7 @@ const BookList = ({ searchTerm }) => {
     const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         const fetchBooks = async () => {
@@ -27,10 +28,29 @@ const BookList = ({ searchTerm }) => {
             }
         };
 
+        const fetchUserData = async () => {
+            try {
+                const token = getToken() || getGoogleToken();
+                const response = await axios.get('http://localhost:3000/api/users/profile', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
         fetchBooks();
+        fetchUserData();
     }, []);
 
     const addToCart = async (book) => {
+        if (user && user.admin) {
+            toast.error('Admin users cannot add items to the cart.');
+            return;
+        }
         if (book.quantity === 0) {
             toast.error('Hết hàng');
             return;
@@ -62,7 +82,7 @@ const BookList = ({ searchTerm }) => {
         ? books.filter(
               (book) =>
                   book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  book.author.toLowerCase().includes(searchTerm.toLowerCase())
+                  book.author.toLowerCase().includes(searchTerm.toLowerCase()),
           )
         : [];
 
@@ -118,7 +138,12 @@ const BookList = ({ searchTerm }) => {
                                             e.preventDefault();
                                             addToCart(book);
                                         }}
-                                        className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-4 py-2 rounded-full hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                        disabled={user && user.admin}
+                                        className={`${
+                                            user && user.admin
+                                                ? 'bg-gray-400 cursor-not-allowed'
+                                                : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'
+                                        } text-white px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
                                     >
                                         Add To Cart
                                     </button>

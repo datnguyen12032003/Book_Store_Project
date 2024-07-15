@@ -23,8 +23,8 @@ const BookDetail = () => {
                 const token = getToken();
                 const response = await axios.get(`/books/${id}`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
                 setBook(response.data);
                 setSelectedImage(response.data.imageurls[0]);
@@ -61,13 +61,13 @@ const BookDetail = () => {
                 {
                     book: book._id,
                     price: book.price,
-                    quantity: quantity
+                    quantity: quantity,
                 },
                 {
                     headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
             );
             toast.success('Đã thêm vào giỏ hàng');
         } catch (err) {
@@ -91,20 +91,20 @@ const BookDetail = () => {
                 `/books/${id}/comments`,
                 {
                     comment: commentText,
-                    rating: rating
+                    rating: rating,
                 },
                 {
                     headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
             );
             toast.success('Bình luận của bạn đã được đăng thành công');
             // Refresh book data after posting comment
             const response = await axios.get(`/books/${id}`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                    Authorization: `Bearer ${token}`,
+                },
             });
             setBook(response.data);
             setCommentText('');
@@ -129,19 +129,25 @@ const BookDetail = () => {
             <div className="bg-white shadow-lg rounded-lg overflow-hidden flex">
                 <div className="w-2/5 p-4">
                     <div className="mb-4 flex justify-center items-center">
-                        <img 
-                            src={selectedImage.imageUrl} 
-                            alt="Selected" 
-                            className="h-[400px] max-w-full max-h-screen object-contain rounded-lg shadow-md" 
+                        <img
+                            src={selectedImage.imageUrl}
+                            alt="Selected"
+                            className="h-[400px] max-w-full max-h-screen object-contain rounded-lg shadow-md"
                         />
                     </div>
                     <div className="grid grid-cols-4 gap-4">
                         {book.imageurls.map((image, index) => (
-                            <div key={index} className="relative group cursor-pointer" onClick={() => setSelectedImage(image)}>
-                                <img 
-                                    src={image.imageUrl} 
-                                    alt={`Image ${index}`} 
-                                    className={`w-full h-24 object-cover rounded-lg shadow-md transition-transform duration-300 transform group-hover:scale-105 ${selectedImage === image ? 'border-2 border-blue-500' : ''}`} 
+                            <div
+                                key={index}
+                                className="relative group cursor-pointer"
+                                onClick={() => setSelectedImage(image)}
+                            >
+                                <img
+                                    src={image.imageUrl}
+                                    alt={`Image ${index}`}
+                                    className={`w-full h-24 object-cover rounded-lg shadow-md transition-transform duration-300 transform group-hover:scale-105 ${
+                                        selectedImage === image ? 'border-2 border-blue-500' : ''
+                                    }`}
                                 />
                             </div>
                         ))}
@@ -152,8 +158,12 @@ const BookDetail = () => {
                         <h2 className="text-3xl font-semibold mb-2 text-gray-800">{book.title}</h2>
                         <p className="text-gray-700 mb-4">{book.description}</p>
                         <div className="mb-4">
-                            <p className="text-gray-900 font-medium">Author: <span className="text-gray-600">{book.author}</span></p>
-                            <p className="text-gray-900 font-medium">Genre: <span className="text-gray-600">{book.genre}</span></p>
+                            <p className="text-gray-900 font-medium">
+                                Author: <span className="text-gray-600">{book.author}</span>
+                            </p>
+                            <p className="text-gray-900 font-medium">
+                                Genre: <span className="text-gray-600">{book.genre}</span>
+                            </p>
                         </div>
                         <p className="text-gray-900 font-medium text-lg">{book.price}.00 USD</p>
                         <p className="text-gray-700">Published by {book.publisher}</p>
@@ -169,7 +179,10 @@ const BookDetail = () => {
                                 <FaPlus className="cursor-pointer" />
                             </button>
                         </div>
-                        <button onClick={addToCart} className="bg-gradient-to-r from-yellow-100 to-orange-200 text-orange-500 px-6 py-2 hover:from-yellow-200 hover:to-orange-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
+                        <button
+                            onClick={addToCart}
+                            className="bg-gradient-to-r from-yellow-100 to-orange-200 text-orange-500 px-6 py-2 hover:from-yellow-200 hover:to-orange-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
+                        >
                             Add to shopping cart
                         </button>
                         <button className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-6 py-2 hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
@@ -181,16 +194,18 @@ const BookDetail = () => {
 
             {/* Hiển thị các comment */}
             <div className="mt-4 bg-white shadow-lg rounded-lg overflow-hidden p-8">
-                   {/* Form nhập bình luận */}
-                   
-                   <div className="mt-8">
+                {/* Form nhập bình luận */}
+
+                <div className="mt-8">
                     <h4 className="text-xl font-semibold mb-4">Add a comment:</h4>
                     <div className="mb-4 flex items-center">
                         <span className="mr-2 text-l">Rating:</span>
                         {[1, 2, 3, 4, 5].map((star) => (
                             <FaStar
                                 key={star}
-                                className={`text-yellow-400 cursor-pointer ${star <= rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                                className={`text-yellow-400 cursor-pointer ${
+                                    star <= rating ? 'text-yellow-500' : 'text-gray-300'
+                                }`}
                                 onClick={() => handleRatingChange(star)}
                             />
                         ))}
@@ -202,8 +217,11 @@ const BookDetail = () => {
                         value={commentText}
                         onChange={handleCommentChange}
                     ></textarea>
-                   
-                    <button onClick={postComment} className="mt-2 mb-10 bg-orange-500 text-white px-4 py-2 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-o-500 focus:ring-offset-2">
+
+                    <button
+                        onClick={postComment}
+                        className="mt-2 mb-10 bg-orange-500 text-white px-4 py-2 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-o-500 focus:ring-offset-2"
+                    >
                         Post Comment
                     </button>
                 </div>
@@ -219,17 +237,23 @@ const BookDetail = () => {
                                     <FaUserCircle className="text-orange-500 mr-4 w-8 h-8" />
                                     <div className="flex-1">
                                         <div className="flex items-center mb-2">
-                                            <p className="text-gray-800 font-semibold mr-2">{comment.author.fullname}</p>
+                                            <p className="text-gray-800 font-semibold mr-2">
+                                                {comment.author.fullname}
+                                            </p>
                                         </div>
                                         <div className="flex items-center text-yellow-400 mb-2">
                                             {Array.from({ length: 5 }, (_, i) => (
                                                 <FaStar
                                                     key={i}
-                                                    className={`mr-[3px] ${i < comment.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                                                    className={`mr-[3px] ${
+                                                        i < comment.rating ? 'text-yellow-400' : 'text-gray-300'
+                                                    }`}
                                                 />
                                             ))}
                                         </div>
-                                        <p className="text-gray-600 text-xs mb-2">{format(new Date(comment.createdAt), 'dd/MM/yyyy HH:mm')}</p>
+                                        <p className="text-gray-600 text-xs mb-2">
+                                            {format(new Date(comment.createdAt), 'dd/MM/yyyy HH:mm')}
+                                        </p>
                                         <p className="text-l">{comment.comment}</p>
                                     </div>
                                 </div>
@@ -237,8 +261,6 @@ const BookDetail = () => {
                         ))}
                     </ul>
                 )}
-
-             
             </div>
         </div>
     );

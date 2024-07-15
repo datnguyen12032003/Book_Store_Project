@@ -18,6 +18,11 @@ paymentRouter
     authenticate.verifyUser,
     async function (req, res, next) {
       const { quantity, amount, order_details } = req.body;
+
+      const fixNum = (num) => {
+        return num.toFixed(2);
+      };
+
       try {
         const listBook = await order_details.map((detail) => {
           return Book.findById(detail.book).exec();
@@ -38,6 +43,9 @@ paymentRouter
             quantity: detail.order_quantity,
           };
         });
+
+        const formattedAmount = fixNum(amount);
+
         console.log(items);
 
         const create_payment_json = {
@@ -56,12 +64,15 @@ paymentRouter
               },
               amount: {
                 currency: "USD",
-                total: amount,
+                total: formattedAmount,
               },
-              description: "Hat for the best team ever",
+              description: "Best book store ever",
             },
           ],
         };
+
+        console.log(fixNum);
+        console.log(items);
 
         paypalConfig.payment.create(
           create_payment_json,
@@ -194,9 +205,8 @@ paymentRouter
             { $inc: { quantity: detail.order_quantity } }
           );
         }
-console.log(order);
+        console.log(order);
         res.status(200).redirect("http://localhost:3001/payment/cancel");
-       
       }
     } catch (err) {
       next(err);
