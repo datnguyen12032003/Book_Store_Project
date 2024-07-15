@@ -88,7 +88,7 @@ const Navbar = ({ onSearch }) => {
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <div className="flex items-center space-x-4">
                     <Link to="/" className="text-3xl font-semibold tracking-tight hover:text-white">
-                        FB88.com
+                        BestBook
                     </Link>
                     <input
                         type="text"
@@ -109,7 +109,7 @@ const Navbar = ({ onSearch }) => {
                                 <button className="hover:text-blue-300 focus:outline-none">
                                     {(user && user.username) || dataUser.email}
                                 </button>
-                                <ul className="absolute hidden group-hover:block right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+                                <ul className="dropdown-menu z-50 absolute hidden group-hover:block right-0 mt-0 w-48 bg-white rounded-md shadow-lg py-1">
                                     <li>
                                         <Link
                                             to="/profile"
@@ -119,18 +119,19 @@ const Navbar = ({ onSearch }) => {
                                             Profile
                                         </Link>
                                     </li>
-                                    <li>
-                                        <Link
-                                            to="/history"
-                                            onClick={handleHistoryClick}
-                                            className="block px-4 py-2 text-gray-800 hover:bg-blue-300"
-                                        >
-                                            History Payment
-                                        </Link>
+
+                                    <li
+                                        onClick={handleLogout}
+                                        className="block px-4 py-2 text-gray-800 hover:bg-blue-300"
+                                    >
+                                        Logout
                                     </li>
+<<<<<<< HEAD
                                     <li onClick={handleLogout} className="hover:text-blue-300">
                                         Logout
                                     </li>
+=======
+>>>>>>> edc25569ba0d8c7eecacc22bafa0a6ed7dddf8d4
                                 </ul>
                             </li>
                         </>
@@ -167,7 +168,7 @@ const Navbar = ({ onSearch }) => {
                                         <button className="hover:text-blue-300 focus:outline-none">
                                             {(user && user.username) || dataUser.email}
                                         </button>
-                                        <ul className="absolute hidden group-hover:block right-0 mt-0 w-48 bg-white rounded-md shadow-lg py-1">
+                                        <ul className="dropdown-menu z-50 absolute hidden group-hover:block right-0 mt-0 w-48 bg-white rounded-md shadow-lg py-1">
                                             <li>
                                                 <Link
                                                     to="/profile"
