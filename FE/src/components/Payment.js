@@ -42,6 +42,7 @@ export default function Payment() {
 
         const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
         const totalPrice = cart.reduce((total, item) => total + item.total_price, 0);
+        console.log(totalPrice);
 
         axios
             .post(
@@ -64,6 +65,7 @@ export default function Payment() {
             .catch((error) => {
                 console.error('Error creating PayPal payment:', error);
             });
+
     };
 
     const handleCancelPayment = () => {
@@ -72,6 +74,7 @@ export default function Payment() {
 
     const fixNumber = (number) => {
         return Number(number.toFixed(2));
+
     };
 
     return (
@@ -109,7 +112,9 @@ export default function Payment() {
                                     {item.book.title}
                                 </div>
                             </div>
+
                             <div className="price col-span-2 flex items-center justify-center">${fixNumber(item.price)}</div>
+
                             <div className="amount col-span-2 flex items-center justify-center">{item.quantity}</div>
                             <div className="totalPrice col-span-2 flex items-center justify-center">
                                 ${fixNumber(item.total_price)}
@@ -129,6 +134,7 @@ export default function Payment() {
                         </div>
                     </div>
                     <button className="bg-red-500 w-full p-4 h-30 rounded-lg text-white" onClick={handlePayment}>
+
                         CHECKOUT
                     </button>
                     <div className='pt-4'>
