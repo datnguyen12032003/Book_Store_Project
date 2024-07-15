@@ -28,7 +28,7 @@ function LoginUser() {
                     setUserInfo(res.data);
                     console.log('user info:', res.data);
                     console.log('Token: ' + res.data);
-                    navigate('/contact');
+                    navigate('/');
                     window.location.reload();
                 } else {
                     throw new Error('Token not found in response.');
@@ -37,25 +37,6 @@ function LoginUser() {
                 console.error('Login failed:', error);
                 toast.error('Failed to log in. Please check your credentials.');
             }
-        }
-    };
-
-    const handleGoogleLoginSuccess = async (response) => {
-        try {
-            // Send the received code to backend to exchange for a token
-            const res = await instance.get(`/api/users/callback?code=${response.code}`);
-
-            // Extract token from response
-            const token = res.data.token;
-
-            // Save token to local storage
-            localStorage.setItem('AUTH_TOKEN', token);
-
-            // Navigate to desired route after successful login
-            navigate('/contact');
-        } catch (error) {
-            // Handle error if token retrieval fails
-            toast.error('Failed to retrieve token from server.');
         }
     };
 
