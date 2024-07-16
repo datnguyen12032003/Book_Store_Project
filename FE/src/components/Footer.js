@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
-        <footer className="bg-orange-500 text-white py-8">
+        <footer className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white shadow-md py-8 font-times mt-8">
             {/*  top-full sticky */}
             {/* fixed bottom-0 w-full */}
             <div className="container mx-auto px-4">

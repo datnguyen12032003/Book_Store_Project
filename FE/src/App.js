@@ -30,6 +30,8 @@ import PaymentSuccess from './components/PaymentSuccessful';
 import PaymentFail from './components/PaymentFail';
 import HistoryOrdersAdmin from './components/Admin/HistoryOrdersAdmin';
 
+
+import '../src/index.css';
 const App = () => {
     const [searchTerm, setSearchTerm] = useState('');
 

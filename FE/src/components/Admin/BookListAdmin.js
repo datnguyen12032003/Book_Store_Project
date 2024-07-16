@@ -86,42 +86,44 @@ const BookListAdmin = () => {
       <div className="mb-4">
         <Link
           to="/addbook"
-          className="bg-green-500 text-white px-4 py-[10px] rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="bg-green-500 border-[1px] border-green-500 text-white rounded-sm px-4 py-[12px] hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           Add New Book
         </Link>
         <button
           onClick={handleDeleteAllBooks}
-          className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ml-4"
+          className="border-red-500 text-red-500 border-2 px-4 py-2 rounded-sm hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ml-4"
         >
           Delete All Books
         </button>
       </div>
       <ul className="divide-y divide-gray-200">
         {books.map((book) => (
-          <li key={book._id} className="py-4">
-            <div className="flex items-center justify-between">
+           <Link
+           to={`/books/${book._id}`}
+          
+         >
+          <li key={book._id} className="py-4 ">
+            <div className=" flex items-center justify-between  hover:shadow-md p-6 ">
               <div>
                 <h3 className="text-xl font-semibold">{book.title}</h3>
                 <p className="text-gray-600">Price: ${book.price}</p>
                 <p className="text-gray-600">Quantity: {book.quantity}</p>
               </div>
               <div className="ml-4">
-                <Link
-                  to={`/books/${book._id}`}
-                  className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-4 py-2 rounded-full hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Description
-                </Link>
+               
+                
                 <button
                   onClick={() => handleDeleteBook(book._id, book.title)}
-                  className="bg-red-500 text-white px-4 py-2 ml-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="text-red-600 border-2 border-red-500 hover:bg-red-500 hover:text-white rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 px-4 py-2 ml-2  "
                 >
                   Delete
                 </button>
               </div>
             </div>
           </li>
+   
+          </Link>
         ))}
       </ul>
 

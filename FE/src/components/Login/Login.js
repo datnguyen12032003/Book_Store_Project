@@ -43,7 +43,7 @@ function LoginUser() {
     };
 
     return (
-        <div className="h-[550px]">
+        <div className="h-[550px] font-times">
             <>
                 <ToastContainer />
                 <div className={cx('wrapper')}>

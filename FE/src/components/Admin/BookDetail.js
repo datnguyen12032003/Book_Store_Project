@@ -113,14 +113,14 @@ const BookDetail = ({ books }) => {
     }
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 font-times">
             {/* <ToastContainer /> */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 font-times">
                 <h2 className="text-2xl font-bold text-black">{book.title}</h2>
                 <div className="ml-6">
                     <Link
                         to={`/edit/${book._id}`}
-                        className="bg-gradient-to-r from-orange-400 to-orange-600 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:from-orange-500 hover:to-orange-700"
+                        className="bg-gradient-to-r from-orange-400 to-orange-600 text-white px-4 py-[11px] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:from-orange-500 hover:to-orange-700"
                     >
                         Edit Book
                     </Link>
@@ -132,13 +132,13 @@ const BookDetail = ({ books }) => {
                     </button>
                     <button
                         onClick={() => setBookStatus('false')}
-                        className="ml-2 bg-red-500 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 hover:bg-red-600"
+                        className="ml-2 border-red-500 border-2 text-red-500 px-4 py-[6px] hover:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 hover:bg-red-600"
                     >
                         Set Inactive
                     </button>
                 </div>
             </div>
-            <div className="bg-white shadow-md rounded-lg overflow-hidden">
+            <div className="bg-white shadow-md rounded-lg overflow-hidden font-times">
                 <table className="min-w-full divide-y divide-gray-200">
                     <tbody className="bg-gray-50 divide-y divide-gray-200">
                         {/* Display book details */}

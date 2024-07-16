@@ -37,7 +37,7 @@ const HistoryOrdersAdmin = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 font-times">
       <h1 className="text-3xl font-bold mb-6 text-orange-600">Order History</h1>
       <ToastContainer />
       <div className="overflow-x-auto">
