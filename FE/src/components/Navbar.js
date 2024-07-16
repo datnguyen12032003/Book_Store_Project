@@ -80,7 +80,7 @@ const Navbar = ({ onSearch }) => {
     };
 
     const handleHistoryClick = () => {
-        navigate('/history');
+        navigate('/transaction');
     };
 
     return (
@@ -174,7 +174,7 @@ const Navbar = ({ onSearch }) => {
                                             </li>
                                             <li>
                                                 <Link
-                                                    to="/history"
+                                                    to="/transaction"
                                                     onClick={handleHistoryClick}
                                                     className="block px-4 py-2 text-gray-800 hover:bg-blue-300"
                                                 >

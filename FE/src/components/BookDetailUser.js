@@ -191,7 +191,7 @@ const BookDetail = () => {
                         </div>
                         <p className="text-gray-900 font-medium text-lg">$ {book.price} USD</p>
                         <p className="text-gray-700">Published by {book.publisher}</p>
-                        <p className="text-gray-700">Số lượng hàng sẵn có: {book.quantity}</p>
+                        <p className="text-gray-700">Stock: {book.quantity}</p>
                     </div>
                     <div className="mt-auto">
                         <div className="flex items-center mb-4">
