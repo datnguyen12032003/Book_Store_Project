@@ -198,7 +198,7 @@ router.post("/forgotPassword", cors.corsWithOptions, (req, res, next) => {
             service: "gmail",
             auth: {
               user: "datnptce171966@fpt.edu.vn",
-              pass: "apny unoj uums pybe",
+              pass: "gtjo rvob jahe eopx",
             },
           });
 
