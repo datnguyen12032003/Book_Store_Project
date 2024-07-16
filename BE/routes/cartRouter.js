@@ -138,6 +138,10 @@ cartRouter
       }
     }
   )
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8bce269947bebfd3e2c99864bf313feb14f8d4f9
   .delete(
     "/deleteCart",
     cors.corsWithOptions,
