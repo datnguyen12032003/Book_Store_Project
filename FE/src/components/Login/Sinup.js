@@ -13,14 +13,14 @@ function RegisterUser() {
     const [email, setEmail] = useState(''); // Tạo state để lưu email
     const [password, setPassword] = useState(''); // Tạo state để lưu password
     const [phone, setPhone] = useState(''); // Tạo state để lưu phone
-    const [address, setAddress] = useState(''); // T
-    const [username, setUsername] = useState('');
+    const [address, setAddress] = useState(''); // Tạo state để lưu address
+    const [username, setUsername] = useState(''); // Tạo state để lưu username
     const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng
+
     const handleRegister = async () => {
         // Hàm xử lý đăng ký
         try {
             // Thực hiện đăng ký
-            var pattern = /[A-Z]/; // Kiểm tra xem chuỗi có chứa ký tự viết hoa hay không
             const phonePattern = /^0\d{9,10}$/;
             const patternUpperCase = /[A-Z]/;
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,42 +30,38 @@ function RegisterUser() {
 
             if (fullname === '' || email === '' || password === '' || phone === '') {
                 // Kiểm tra xem fullname, email, password, confirmPassword
-                toast.error('Vui Lòng Xem Lại Thông Tin !!!');
+                toast.error('Please check the information again !!!');
             } else if (checkEmailUpperCase === true) {
                 // Kiểm tra xem email có chứa ký tự viết hoa không
-                toast.error('Email Không Được Viết Hoa !!!');
+                toast.error('Invalid email !!!');
             } else if (!checkEmailSyntax) {
                 // Kiểm tra cú pháp email
-                toast.error('Email Không Hợp Lệ !!!');
+                toast.error('Invalid email !!!');
             } else if (!checkPhone) {
                 // Kiểm tra tính hợp lệ của số điện thoại
-                toast.error('Số Điện Thoại Không Hợp Lệ !!!');
+                toast.error('Telephone invalid !!!');
             } else {
                 // Nếu đăng ký thành công
                 const res = await instance.post('/users/signup', {
-                    // Thực hiện đăng ký
                     fullname,
                     email,
                     password,
                     username,
                     phone,
                     address,
-                }); // Gửi yêu cầu đăng ký đến server
-                // toast.success(res.data.message); // Hiển thị thông báo thành công
-                alert('Your account has been successfully registered, please log in');
-                navigate('/login');
+                });
+
+                toast.success('Sign Up Success! Go to login page after 5 seconds.');
+                setTimeout(() => {
+                    navigate('/login');
+                }, 5000);
             }
         } catch (error) {
-            // // Nếu đăng ký thất bại
-            // toast.error(error.response.data.message); // Hiển thị thông báo lỗi
             if (error.response) {
-                // The request was made and the server responded with a status code
                 if (error.response.status === 409) {
-                    // HTTP status 409 means conflict (e.g., duplicate username or email)
                     toast.error(error.response.data.message);
                 }
                 if (error.response.status === 500) {
-                    // HTTP status 409 means conflict (e.g., duplicate username or email)
                     toast.error('Username or email already exists');
                 } else {
                     // Other server errors
