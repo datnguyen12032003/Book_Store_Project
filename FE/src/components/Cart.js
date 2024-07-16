@@ -105,12 +105,16 @@ export default function Cart() {
                             </div>
                         </div>
                     </div>
-                    <button
-                        onClick={handleChangePayment}
-                        className="bg-red-500 w-full p-4 h-30 rounded-lg text-white"
-                    >
-                        BUY NOW
-                    </button>
+                    {cart.length === 0 ? (
+                        <div className="pt-10 text-center text-xl text-gray-700">Can not buy</div>
+                    ) : (
+                        <button
+                            onClick={handleChangePayment}
+                            className="bg-red-500 w-full p-4 h-30 rounded-lg text-white"
+                        >
+                            BUY NOW
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

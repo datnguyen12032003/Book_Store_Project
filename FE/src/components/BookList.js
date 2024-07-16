@@ -10,6 +10,9 @@ const BookList = ({ searchTerm }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
+    const [minPrice, setMinPrice] = useState('');
+    const [maxPrice, setMaxPrice] = useState('');
+    const [ratingFilter, setRatingFilter] = useState(''); // State để lưu giá trị rating người dùng nhập
 
     useEffect(() => {
         const fetchBooks = async () => {
@@ -71,11 +74,63 @@ const BookList = ({ searchTerm }) => {
                 },
             );
             console.log('Added to cart:', response.data);
-            toast.success('Đã thêm vào giỏ hàng');
+            toast.success('Added to cart');
         } catch (err) {
             console.error('Error adding to cart:', err.message);
-            toast.error('Error: Đã xảy ra lỗi khi thêm vào giỏ hàng');
+            toast.error('An error occurred when adding to cart');
         }
+    };
+
+    const fetchBooksByPriceRange = async (min, max) => {
+        try {
+            const token = getToken();
+            const response = await axios.get(`/books/price/from${min}/to${max}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setBooks(response.data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchBooksByRating = async (minRating) => {
+        try {
+            const token = getToken();
+            const response = await axios.get(`/books/rating/${minRating}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setBooks(response.data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleFilterByPrice = () => {
+        if (!minPrice || !maxPrice) {
+            toast.error('Please enter the minimum and maximum price.');
+            return;
+        }
+        fetchBooksByPriceRange(minPrice, maxPrice);
+    };
+
+    const handleSortByRating = () => {
+        if (ratingFilter < 3 || ratingFilter > 5) {
+            toast.error('Please enter the star number from 1 to 5.');
+            return;
+        }
+        fetchBooksByRating(ratingFilter);
+    };
+
+    const handleRatingInputChange = (event) => {
+        setRatingFilter(Number(event.target.value)); // Chuyển đổi giá trị nhập vào thành số
     };
 
     const filteredBooks = Array.isArray(books)
@@ -83,7 +138,7 @@ const BookList = ({ searchTerm }) => {
               (book) =>
                   (book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   book.author.toLowerCase().includes(searchTerm.toLowerCase())) &&
-                  book.status === true // only include books with status true
+                  book.status === true // chỉ bao gồm sách có status là true
           )
         : [];
 
@@ -100,13 +155,50 @@ const BookList = ({ searchTerm }) => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8 font-times text-center mt-[50px]">
+        <div className="container mx-auto px-4 py-8 font-times text-center mt-[50px] ">
             <ToastContainer />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="mb-14 flex justify-start items-start ">
+            {/* border-t border-gray-300 my-4 py-4 */}
+                <input
+                    type="number"
+                    placeholder="Minimum price"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    className="border border-gray-300 px-4 py-2 mr-2 text-center text-gray-700 rounded-md"
+                />
+                <input
+                    type="number"
+                    placeholder="Maximum price"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    className="border border-gray-300 px-4 py-2 mr-2 text-center text-gray-700 rounded-md"
+                />
+                <button
+                    onClick={handleFilterByPrice}
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md mr-2"
+                >
+                    Sort by Price
+                </button>
+                <input
+                    type="number"
+                    
+                    placeholder="Rating (1-5)"
+                    value={ratingFilter}
+                    onChange={handleRatingInputChange}
+                    className="border border-gray-300 px-4 py-2 mr-2 text-center text-gray-700 rounded-md"
+                />
+                <button
+                    onClick={handleSortByRating}
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md"
+                >
+                    Sort by Rating
+                </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredBooks.map((book) => (
                     <div
                         key={book._id}
-                        className="  "
+                        className=""
                         // rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl
                     >
                         <Link to={`/book/${book._id}`}>
@@ -118,7 +210,7 @@ const BookList = ({ searchTerm }) => {
                                         : 'default-image-url.jpg'
                                 }
                                 alt={book.title}
-                                className="w-full h-64 object-cover rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl"
+                                className="w-full max-h-screen object-cover rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl"
                             />
                             <div className="p-4">
                                 <h2 className="text-l font-thin mb-2 text-gray-800 hover:underline ">{book.title}</h2>
@@ -133,7 +225,7 @@ const BookList = ({ searchTerm }) => {
                                 </div>
                                 <div className="">
                                 {/* flex items-center justify-between */}
-                                    <p className="text-gray-900 font-medium text-lg">
+                                    <p className="text-gray-900 font-medium text-lg hover:text-green-500">
                                         $ {formatPrice(book.price)} USD
                                     </p>
                                     <button
@@ -144,9 +236,9 @@ const BookList = ({ searchTerm }) => {
                                         disabled={user && user.admin}
                                         className={`${
                                             user && user.admin
-                                                ? 'border-gray-400 text-gray-400 border-2 cursor-not-allowed pr-[85px] pl-[85px]'
-                                                : 'text-orange-500 px-4 py-3 border-2 border-orange-400 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-6 pr-[85px] pl-[85px] rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl'
-                                        } text-orange-500 px-4 py-3 border-2 border-orange-400 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-6 pr-[85px] pl-[85px] rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl`}
+                                                ? 'border-gray-400 text-gray-400  cursor-not-allowed pr-[85px] pl-[85px]'
+                                                : 'text-orange-500  border-orange-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-6 rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl'
+                                        } px-[114px] py-3 border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-6  rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl`}
                                     >
                                         Add To Cart
                                     </button>

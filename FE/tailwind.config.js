@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        times: ['"Se"', 'Times', 'serif', 'Times New Roman'],
+        libre: ['"Libre Baskerville"', 'serif'],
       },
       fontWeight: {
         thin: '100',

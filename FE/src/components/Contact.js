@@ -21,9 +21,9 @@ const ContactUs = () => {
     };
 
     return (
-        <div className="container mx-auto p-8">
+        <div className="container mx-auto p-8 ">
             <h1 className="text-3xl font-bold text-orange-600 text-center mb-8 font-times">Contact Us</h1>
-            <div className="bg-white shadow-md rounded-lg p-6">
+            <div className="bg-white shadow-lg rounded-lg p-6">
                 <h2 className="text-2xl font-semibold text-orange-500 mb-4">Our Contact Information</h2>
                 <p className="text-gray-700 mb-4">
                     We are always here to help you. Feel free to reach out to us through any of the following methods:

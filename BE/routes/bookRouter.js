@@ -181,31 +181,25 @@ bookRouter
         next(err);
       });
   });
-//sort by rating from min to 5
-bookRouter
-  .route("/rating/:min")
-  .options(cors.corsWithOptions, (req, res) => {
-    res.sendStatus(200);
-  })
+  bookRouter.route('/rating/:min')
+  .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
   .get(cors.cors, (req, res, next) => {
-    //find all books by rating
-    Books.find({ total_rating: { $gte: req.params.min, $lte: 5 } })
-      .populate("comments.author", "fullname _id")
-      .populate("imageurls.imageUrl") //gte: greater than or equal, lte: less than or equal
-      .then(
-        (books) => {
-          if (books.length == 0) {
-            res.json({ message: "No books found" });
-          } else {
-            res.json(books);
-          }
-        },
-        (err) => next(err)
-      )
-      .catch((err) => {
-        next(err);
-      });
+      Books.find({ total_rating: { $gte: req.params.min, $lte: 5 } })
+          .populate('comments.author', 'fullname _id')
+          .populate('imageurls.imageUrl')
+          .then(
+              (books) => {
+                  if (books.length == 0) {
+                      res.json({ message: 'No books found' });
+                  } else {
+                      res.json(books);
+                  }
+              },
+              (err) => next(err)
+          )
+          .catch((err) => next(err));
   });
+
 
 //All books
 bookRouter

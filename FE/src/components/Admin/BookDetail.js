@@ -182,14 +182,14 @@ const BookDetail = ({ books }) => {
             <ImageUploader bookId={book._id} onUploadSuccess={handleUploadSuccess} />
             {book.imageurls && book.imageurls.length > 0 && (
                 <div className="mt-4">
-                    <h3 className="text-xl font-bold mb-2">Images</h3>
+                    <h3 className="text-xl font-bold mb-2">Images:</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {book.imageurls.map((image, index) => (
                             <div key={image._id} className="relative group">
                                 <img
                                     src={image.imageUrl}
                                     alt={`Image ${index}`}
-                                    className="w-full h-64 object-cover rounded-md"
+                                    className="w-full max-h-screen object-cover rounded-md"
                                 />
                                 {defaultImageId === image._id && (
                                     <div className="absolute inset-0 bg-black opacity-25 rounded-md"></div>

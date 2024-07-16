@@ -87,7 +87,7 @@ const Navbar = ({ onSearch }) => {
         <nav className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white shadow-md font-times">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <div className="flex items-center space-x-4">
-                    <Link to="/" className="text-3xl font-semibold tracking-tight hover:text-white">
+                    <Link to="/" className="text-2xl font-semibold tracking-tight hover:text-white">
                         FBStore
                     </Link>
                     <input
@@ -160,7 +160,7 @@ const Navbar = ({ onSearch }) => {
                                 <>
                                     <li className="relative group">
                                         <button className="hover:text-blue-300 focus:outline-none">
-                                            {(user && user.username) || dataUser.email}
+                                            {(user && user.fullname) || dataUser.email}
                                         </button>
                                         <ul className="dropdown-menu z-50 absolute hidden group-hover:block right-0 mt-0 w-48 bg-white rounded-md shadow-lg py-1">
                                             <li>
