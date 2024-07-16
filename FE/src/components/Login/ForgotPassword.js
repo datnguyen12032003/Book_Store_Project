@@ -6,37 +6,42 @@ const ResetPassword = () => {
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [step, setStep] = useState(1); // Step 1: Enter Email, Step 2: Enter OTP and New Password
+    const [step, setStep] = useState(1);
     const navigate = useNavigate();
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3000/api/users/forgotpassword', { email });
-            alert('OTP đã được gửi đến email của bạn');
-            setStep(2);
+            const response = await axios.post('http://localhost:3000/api/users/forgotPassword', { email });
+            toast.success('OTP has been sent to your email');
+            setTimeout(() => {
+                setStep(2);
+            }, 2000);
         } catch (error) {
             console.error('Error sending email', error);
-            toast.error('Email không tồn tại hoặc chưa được đăng ký !!!');
+            toast.error('Email does not exist or has not been registered !!!');
         }
     };
 
     const handleResetSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3000/api/users/resetpassword', {
+            const response = await axios.post('http://localhost:3000/api/users/resetPassword', {
                 email,
                 otp,
                 newPassword,
             });
-            alert('Mật khẩu đã được đặt lại thành công');
-            navigate('/login');
-            setStep(1);
+
+            //setStep(1);
             setEmail('');
             setOtp('');
             setNewPassword('');
+            toast.success('Password has been reset successfully');
+            setTimeout(() => {
+                navigate('/login');
+            }, 5000);
         } catch (error) {
             console.error('Error resetting password', error);
-            alert('Có lỗi xảy ra khi đặt lại mật khẩu');
+            toast.error('OTP invalid');
         }
     };
 
@@ -47,7 +52,7 @@ const ResetPassword = () => {
                 <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
                     {step === 1 ? (
                         <form onSubmit={handleEmailSubmit} className="space-y-4">
-                            <h2 className="text-2xl font-bold text-center">Quên mật khẩu</h2>
+                            <h2 className="text-2xl font-bold text-center">Forgot Password</h2>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Email:</label>
                                 <input
@@ -62,12 +67,12 @@ const ResetPassword = () => {
                                 type="submit"
                                 className="w-full px-4 py-2 font-bold text-white bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"
                             >
-                                Gửi OTP
+                                Send OTP
                             </button>
                         </form>
                     ) : (
                         <form onSubmit={handleResetSubmit} className="space-y-4">
-                            <h2 className="text-2xl font-bold text-center">Đặt lại mật khẩu</h2>
+                            <h2 className="text-2xl font-bold text-center">Reset Password</h2>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">OTP:</label>
                                 <input
@@ -79,7 +84,7 @@ const ResetPassword = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Mật khẩu mới:</label>
+                                <label className="block text-sm font-medium text-gray-700">New Password:</label>
                                 <input
                                     type="password"
                                     value={newPassword}
@@ -92,7 +97,7 @@ const ResetPassword = () => {
                                 type="submit"
                                 className="w-full px-4 py-2 font-bold text-white bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"
                             >
-                                Đặt lại mật khẩu
+                                Reset Password
                             </button>
                         </form>
                     )}
