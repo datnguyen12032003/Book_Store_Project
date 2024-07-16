@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
 import { getGoogleToken, getToken } from './Login/app/static';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function PaymentFail() {
+    const navigate = useNavigate();
+
     useEffect(() => {
         const token = getToken() || getGoogleToken();
         // Fetch user profile data when component mounts
@@ -24,6 +27,10 @@ export default function PaymentFail() {
             });
     }, []);
 
+    const goHome = () => {
+        navigate('/');
+    }
+
     return (
         <div className="container min-h-screen mx-auto px-4 py-8 flex justify-center items-center">
             <div className="max-w-md text-2xl font-semibold shadow-md p-8 rounded-lg text-gray-800 mb-4">
@@ -32,6 +39,7 @@ export default function PaymentFail() {
                     <img className='w-14 h-14 mr-4' src="https://th.bing.com/th/id/OIP.phTFtqlOwNeT0uZBDgP54QHaHa?w=880&h=880&rs=1&pid=ImgDetMain" alt="" />
                     <p className=' text-2xl'>Please checkout again!</p>
                 </div>
+                <button onClick={goHome} className=' text-blue-500'>Quay về trang chủ</button>
             </div>
         </div>
     );
