@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getGoogleToken, getToken } from './Login/app/static';
 
-export default function Payment() {
+export default function Payment({ deleteCart }) {
     const location = useLocation();
     const { cart } = location.state;
     const [dataUser, setDataUser] = useState({});
@@ -65,7 +65,6 @@ export default function Payment() {
             .catch((error) => {
                 console.error('Error creating PayPal payment:', error);
             });
-
     };
 
     const handleCancelPayment = () => {
@@ -74,7 +73,6 @@ export default function Payment() {
 
     const fixNumber = (number) => {
         return Number(number.toFixed(2));
-
     };
 
     return (
@@ -113,7 +111,9 @@ export default function Payment() {
                                 </div>
                             </div>
 
-                            <div className="price col-span-2 flex items-center justify-center">${fixNumber(item.price)}</div>
+                            <div className="price col-span-2 flex items-center justify-center">
+                                ${fixNumber(item.price)}
+                            </div>
 
                             <div className="amount col-span-2 flex items-center justify-center">{item.quantity}</div>
                             <div className="totalPrice col-span-2 flex items-center justify-center">
@@ -134,13 +134,13 @@ export default function Payment() {
                         </div>
                     </div>
                     <button className="bg-red-500 w-full p-4 h-30 rounded-lg text-white" onClick={handlePayment}>
-
                         CHECKOUT
                     </button>
-                    <div className='pt-4'>
+                    <div className="pt-4">
                         <button
                             onClick={handleCancelPayment}
                             className="bg-slate-300 w-full p-4 h-30 rounded-lg text-black"
+                            deleteCart={deleteCart}
                         >
                             CANCEL
                         </button>
