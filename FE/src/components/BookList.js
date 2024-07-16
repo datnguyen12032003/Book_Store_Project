@@ -100,13 +100,14 @@ const BookList = ({ searchTerm }) => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8 font-times text-center mt-[50px]">
             <ToastContainer />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {filteredBooks.map((book) => (
                     <div
                         key={book._id}
-                        className="bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl"
+                        className="  "
+                        // rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl
                     >
                         <Link to={`/book/${book._id}`}>
                             <img
@@ -117,22 +118,23 @@ const BookList = ({ searchTerm }) => {
                                         : 'default-image-url.jpg'
                                 }
                                 alt={book.title}
-                                className="w-full h-64 object-cover"
+                                className="w-full h-64 object-cover rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl"
                             />
                             <div className="p-4">
-                                <h2 className="text-2xl font-semibold mb-2 text-gray-800">{book.title}</h2>
-                                <p className="text-gray-700 mb-2">{book.description}</p>
+                                <h2 className="text-l font-thin mb-2 text-gray-800 hover:underline ">{book.title}</h2>
+                                {/* <p className="text-gray-700 mb-2">{book.description}</p> */}
                                 <div className="mb-2">
-                                    <p className="text-gray-900 font-medium">
+                                    {/* <p className="text-gray-900 font-medium">
                                         Author: <span className="text-gray-600">{book.author}</span>
                                     </p>
                                     <p className="text-gray-900 font-medium">
                                         Genre: <span className="text-gray-600">{book.genre}</span>
-                                    </p>
+                                    </p> */}
                                 </div>
-                                <div className="flex items-center justify-between">
+                                <div className="">
+                                {/* flex items-center justify-between */}
                                     <p className="text-gray-900 font-medium text-lg">
-                                        {formatPrice(book.price)} USD
+                                        $ {formatPrice(book.price)} USD
                                     </p>
                                     <button
                                         onClick={(e) => {
@@ -142,9 +144,9 @@ const BookList = ({ searchTerm }) => {
                                         disabled={user && user.admin}
                                         className={`${
                                             user && user.admin
-                                                ? 'bg-gray-400 cursor-not-allowed'
-                                                : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'
-                                        } text-white px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                                                ? 'border-gray-400 text-gray-400 border-2 cursor-not-allowed pr-[85px] pl-[85px]'
+                                                : 'text-orange-500 px-4 py-3 border-2 border-orange-400 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-6 pr-[85px] pl-[85px] rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl'
+                                        } text-orange-500 px-4 py-3 border-2 border-orange-400 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-6 pr-[85px] pl-[85px] rounded-lg overflow-hidden transform transition-transform hover:scale-105 hover:shadow-2xl`}
                                     >
                                         Add To Cart
                                     </button>

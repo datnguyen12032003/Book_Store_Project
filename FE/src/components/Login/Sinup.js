@@ -82,7 +82,7 @@ function RegisterUser() {
     };
 
     return (
-        <div className="h-[850px]">
+        <div className="h-[850px] font-times">
             <>
                 <ToastContainer />
                 <div className={cx('wrapper-signup')}>

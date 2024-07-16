@@ -68,7 +68,7 @@ const RevenueDashboard = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4 h-[443px]">
+    <div className="container mx-auto p-4 h-[443px] font-times">
       <h1 className="text-2xl font-bold mb-4">Revenue Dashboard</h1>
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div className="bg-white p-4 rounded-lg shadow-md flex items-center">

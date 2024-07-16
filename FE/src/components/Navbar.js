@@ -84,11 +84,11 @@ const Navbar = ({ onSearch }) => {
     };
 
     return (
-        <nav className="bg-orange-500 text-white shadow-md">
+        <nav className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white shadow-md font-times">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <div className="flex items-center space-x-4">
                     <Link to="/" className="text-3xl font-semibold tracking-tight hover:text-white">
-                        BestBook
+                        FBStore
                     </Link>
                     <input
                         type="text"

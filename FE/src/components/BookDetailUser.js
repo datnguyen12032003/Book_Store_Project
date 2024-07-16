@@ -16,6 +16,7 @@ const BookDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [commentText, setCommentText] = useState('');
     const [rating, setRating] = useState(0);
+    const [showComments, setShowComments] = useState(false);
 
     useEffect(() => {
         const fetchBook = async () => {
@@ -76,6 +77,29 @@ const BookDetail = () => {
         }
     };
 
+    const buyNow = async () => {
+        try {
+            const token = getToken();
+            const response = await axios.post(
+                '/payment/create_payment_paypal',
+                {
+                    quantity: quantity,
+                    amount: book.price * quantity,
+                    order_details: [{ book: book._id, order_quantity: quantity, order_price: book.price }]
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+            window.location.href = response.data; // Redirect to PayPal approval URL
+        } catch (err) {
+            console.error('Error creating PayPal payment:', err.message);
+            toast.error('Đã xảy ra lỗi khi mua hàng');
+        }
+    };
+
     const handleCommentChange = (event) => {
         setCommentText(event.target.value);
     };
@@ -124,7 +148,7 @@ const BookDetail = () => {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8 ">
             <ToastContainer />
             <div className="bg-white shadow-lg rounded-lg overflow-hidden flex">
                 <div className="w-2/5 p-4">
@@ -165,7 +189,7 @@ const BookDetail = () => {
                                 Genre: <span className="text-gray-600">{book.genre}</span>
                             </p>
                         </div>
-                        <p className="text-gray-900 font-medium text-lg">{book.price} USD</p>
+                        <p className="text-gray-900 font-medium text-lg">$ {book.price} USD</p>
                         <p className="text-gray-700">Published by {book.publisher}</p>
                         <p className="text-gray-700">Số lượng hàng sẵn có: {book.quantity}</p>
                     </div>
@@ -185,83 +209,88 @@ const BookDetail = () => {
                         >
                             Add to shopping cart
                         </button>
-                        <button className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-6 py-2 hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        <button
+                            onClick={buyNow}
+                            className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-6 py-2 hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        >
                             Buy Now
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* Hiển thị các comment */}
-            <div className="mt-4 bg-white shadow-lg rounded-lg overflow-hidden p-8">
-                {/* Form nhập bình luận */}
+            <div className="mt-8 bg-white shadow-lg rounded-lg overflow-hidden p-8">
+                    {/* Form nhập bình luận */}
+                    <div className="mt-8">
+                        <h4 className="text-xl font-semibold mb-4">Add a comment:</h4>
+                        <div className="mb-4 flex items-center">
+                            {[1, 2, 3, 4, 5].map((value) => (
+                                <FaStar
+                                    key={value}
+                                    className={`cursor-pointer text-xl ${
+                                        value <= rating ? 'text-yellow-500' : 'text-gray-400'
+                                    }`}
+                                    onClick={() => handleRatingChange(value)}
+                                />
+                            ))}
+                        </div>
+                        <textarea
+                            className="w-full border border-gray-300 p-2 rounded-lg mb-4"
+                            rows="3"
+                            placeholder='Please comment here'
+                            value={commentText}
+                            onChange={handleCommentChange}
+                        />
+                        <button
+                            onClick={postComment}
+                            className="bg-gradient-to-r from-yellow-100 to-orange-200 text-orange-500 px-6 py-2 hover:from-yellow-200 hover:to-orange-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        >
+                            Post Comment
+                        </button>
+                    </div>
+ {/* Toggle Comments Section */}
+ <div className="flex items-center justify-center">
+                <button
+                    onClick={() => setShowComments(!showComments)}
+                    className=" bg-gradient-to-r from-yellow-100 to-orange-200 text-orange-500 px-6 py-3 hover:from-yellow-200 hover:to-orange-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                    {showComments ? 'Hide Comments' : 'Show Comments'}
+                </button>
+            </div>
 
-                <div className="mt-8">
-                    <h4 className="text-xl font-semibold mb-4">Add a comment:</h4>
-                    <div className="mb-4 flex items-center">
-                        <span className="mr-2 text-l">Rating:</span>
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <FaStar
-                                key={star}
-                                className={`text-gray-300 cursor-pointer ${
-                                    star <= rating ? 'text-yellow-500' : 'text-gray-300'
-                                }`}
-                                onClick={() => handleRatingChange(star)}
-                            />
+            {/* Hiển thị các comment */}
+            {showComments && (
+                <div className="mt-4 bg-white shadow-lg rounded-lg overflow-hidden p-8 ">
+                    {/* Hiển thị các bình luận */}
+                    <div className="mt-8">
+                        <h4 className="text-xl font-semibold mb-4">Comments:</h4>
+                        {book.comments.map((comment, index) => (
+                            <div key={index} className="mb-4">
+                                <div className="flex items-center mb-2">
+                                    <FaUserCircle className="mr-2 text-gray-500" />
+                                    <span className="font-semibold text-gray-700">{comment.author.fullname}</span>
+                                </div>
+                                <p className="text-gray-700 mb-2">{comment.comment}</p>
+                                <div className="flex items-center mb-2">
+                                    {[1, 2, 3, 4, 5].map((value) => (
+                                        <FaStar
+                                            key={value}
+                                            className={`text-xl ${
+                                                value <= comment.rating ? 'text-yellow-500' : 'text-gray-400'
+                                            }`}
+                                        />
+                                    ))}
+                                </div>
+                                <p className="text-gray-500 text-sm">
+                                    {format(new Date(comment.createdAt), 'dd/MM/yyyy')}
+                                </p>
+                            </div>
                         ))}
                     </div>
-                    <textarea
-                        className="border border-gray-300 rounded-md w-full px-3 py-2 focus:outline-none focus:border-blue-500"
-                        rows="4"
-                        placeholder="Write your comment here..."
-                        value={commentText}
-                        onChange={handleCommentChange}
-                    ></textarea>
-
-                    <button
-                        onClick={postComment}
-                        className="mt-2 mb-10 bg-orange-500 text-white px-4 py-2 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-o-500 focus:ring-offset-2"
-                    >
-                        Post Comment
-                    </button>
                 </div>
-                <h3 className="text-xl font-semibold mb-4">Comments:</h3>
-
-                {book.comments.length === 0 ? (
-                    <p>No comments yet.</p>
-                ) : (
-                    <ul className="divide-y divide-gray-200">
-                        {book.comments.map((comment, index) => (
-                            <li key={index} className="py-4">
-                                <div className="flex items-start">
-                                    <FaUserCircle className="text-orange-500 mr-4 w-8 h-8" />
-                                    <div className="flex-1">
-                                        <div className="flex items-center mb-2">
-                                            <p className="text-gray-800 font-semibold mr-2">
-                                                {comment.author.fullname}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center text-yellow-400 mb-2">
-                                            {Array.from({ length: 5 }, (_, i) => (
-                                                <FaStar
-                                                    key={i}
-                                                    className={`mr-[3px] ${
-                                                        i < comment.rating ? 'text-yellow-400' : 'text-gray-300'
-                                                    }`}
-                                                />
-                                            ))}
-                                        </div>
-                                        <p className="text-gray-600 text-xs mb-2">
-                                            {format(new Date(comment.createdAt), 'dd/MM/yyyy HH:mm')}
-                                        </p>
-                                        <p className="text-l">{comment.comment}</p>
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
+                
+            )}
+        </div>
         </div>
     );
 };
