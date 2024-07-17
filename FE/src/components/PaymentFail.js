@@ -33,14 +33,19 @@ export default function PaymentFail() {
 
     return (
         <div className="container min-h-screen mx-auto px-4 py-8 flex justify-center items-center">
-            <div className="max-w-md text-2xl font-semibold shadow-md p-8 rounded-lg text-gray-800 mb-4">
-                <div className=' text-2xl mb-4'>Checkout Fail</div>
+        <div className="max-w-md bg-white text-gray-800 shadow-lg rounded-lg overflow-hidden">
+            <div className="p-8">
                 <div className="flex items-center justify-center mb-6">
-                    <img className='w-14 h-14 mr-4' src="https://th.bing.com/th/id/OIP.phTFtqlOwNeT0uZBDgP54QHaHa?w=880&h=880&rs=1&pid=ImgDetMain" alt="" />
-                    <p className=' text-2xl'>Please checkout again!</p>
+                    <img className="w-16 h-16 mr-4" src="https://th.bing.com/th/id/OIP.phTFtqlOwNeT0uZBDgP54QHaHa?w=880&h=880&rs=1&pid=ImgDetMain" alt="Failure icon" />
+                    <p className="text-2xl font-semibold">Checkout Fail</p>
                 </div>
-                <button onClick={goHome} className=' text-blue-500'>Quay về trang chủ</button>
+                <p className="text-lg mb-4">Please checkout again!</p>
+                <button onClick={goHome} className="block w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Back to Home
+                </button>
             </div>
         </div>
+    </div>
+    
     );
 }

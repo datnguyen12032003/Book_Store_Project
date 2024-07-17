@@ -4,12 +4,10 @@ import { Link } from 'react-router-dom';
 const Footer = () => {
     return (
         <footer className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white shadow-md py-8 font-times mt-8">
-            {/*  top-full sticky */}
-            {/* fixed bottom-0 w-full */}
             <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h2 className="text-2xl font-semibold">FB88.com</h2>
+                        <h2 className="text-2xl font-semibold">FBStore</h2>
                         <p className="text-white">Your favorite online bookstore</p>
                     </div>
                     <div className="flex space-x-6">
@@ -19,7 +17,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <div className="flex justify-between items-center border-t border-gray-700 pt-6">
-                    <p className="text-white">&copy; 2024 VietBookStore. All rights reserved.</p>
+                    <p className="text-white">&copy; 2024 FBStore. All rights reserved.</p>
                     <div className="flex space-x-4">
                         <a href="https://facebook.com" className="hover:text-blue-500">
                             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

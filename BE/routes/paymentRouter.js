@@ -199,12 +199,12 @@ paymentRouter
         }
 
         //tra sach ve kho
-        for (let detail of order.order_details) {
-          await Book.findOneAndUpdate(
-            { _id: detail.book },
-            { $inc: { quantity: detail.order_quantity } }
-          );
-        }
+        // for (let detail of order.order_details) {
+        //   await Book.findOneAndUpdate(
+        //     { _id: detail.book },
+        //     { $inc: { quantity: detail.order_quantity } }
+        //   );
+        // }
         console.log(order);
         res.status(200).redirect("http://localhost:3001/payment/cancel");
       }
